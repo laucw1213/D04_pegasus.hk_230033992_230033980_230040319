@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField, \
-    TextAreaField, IntegerField
+    TextAreaField, IntegerField, SelectField, FieldList
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, \
     Length
 from flask_babel import _, lazy_gettext as _l
@@ -77,4 +77,9 @@ class OrderForm(FlaskForm):
     name = StringField('Name')
     order_id = IntegerField('Order ID')
     product_id = IntegerField('Product ID')
-    submit = SubmitField('Submit')
+    product_category = SelectField('Product Category', choices=[])  # Add this line
+    submit = SubmitField('Submit')\
+    
+class OrderForm(FlaskForm):
+    product_id = IntegerField('Product ID', validators=[DataRequired()])
+    submit = SubmitField('Create Order')

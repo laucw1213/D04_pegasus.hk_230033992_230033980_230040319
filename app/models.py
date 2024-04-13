@@ -9,6 +9,8 @@ from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
 
+
+
 followers = db.Table(
     'followers',
     db.Column('follower_id', db.Integer, db.ForeignKey('user.id')),
@@ -91,7 +93,6 @@ class Post(db.Model):
     def __repr__(self) -> str:
         return f'<Post {self.body}>'
 
-# 建立一個新的關聯表
 orders_products = db.Table('orders_products',
     db.Column('order_id', db.Integer, db.ForeignKey('order.id'), primary_key=True),
     db.Column('product_id', db.Integer, db.ForeignKey('product.id'), primary_key=True)
@@ -104,13 +105,14 @@ class Category(db.Model):
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64))
-    price = db.Column(db.Float)  # 新增的價格欄位
-    category_id = db.Column(db.Integer, db.ForeignKey('category.id'))  # 新增的類別欄位
-    orders = db.relationship('Order', secondary=orders_products, backref=db.backref('products', lazy='dynamic'))
-
+    name = db.Column(db.String(64), index=True, unique=True)
+    price = db.Column(db.Float)
+    category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
+    orders = db.relationship('Order', secondary=orders_products, backref=db.backref('order_products', lazy='dynamic'))
+    
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    products = db.relationship('Product', secondary=orders_products, backref=db.backref('product_orders', lazy='dynamic'))
 
     def add_product(self, product):
         if not self.is_product_added(product):
@@ -121,5 +123,5 @@ class Order(db.Model):
             self.products.remove(product)
 
     def is_product_added(self, product):
-        return self.products.filter(orders_products.c.product_id == product.id).count() > 0
-    
+        return product in self.products
+

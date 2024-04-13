@@ -6,7 +6,7 @@ from flask_babel import _, get_locale
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm, \
     ResetPasswordRequestForm, ResetPasswordForm, OrderForm
-from app.models import User, Post, Product, Order
+from app.models import User, Post, Product, Order, Category
 from app.email import send_password_reset_email
 
 
@@ -194,24 +194,23 @@ def unfollow(username):
 @login_required
 def order_form():
     form = OrderForm()
-    query = request.args.get('query', '')
-    products = Product.query.filter(Product.name.contains(query)).all()
+    query = request.args.get('query')  # 從請求參數中獲取查詢字串
+
+    if query:
+        products = Product.query.filter(Product.name.contains(query)).all()  # 如果有查詢字串，則查詢名稱包含該字串的所有產品
+    else:
+        products = Product.query.all()  # 如果沒有查詢字串，則查詢所有的產品
 
     if form.validate_on_submit():
-        product_id = form.product_id.data  # 接受一個產品 ID
-
-        # 創建新的訂單
-        order = Order()
-        db.session.add(order)
-        db.session.commit()
-
-        # 將產品添加到訂單中
-        product = Product.query.get(product_id)  # 透過產品 ID 查詢
+        product = Product.query.get(form.product_id.data)
         if product is not None:
+            order = Order()
+            db.session.add(order)
+            db.session.commit()
             order.add_product(product)
             db.session.commit()
-
-        flash('Order created and product added successfully')  # 成功訊息
+            flash('Order created and product added successfully')
+            return redirect(url_for('order_form'))
 
     return render_template('order_form.html.j2', title='Order Form', form=form, products=products)
 

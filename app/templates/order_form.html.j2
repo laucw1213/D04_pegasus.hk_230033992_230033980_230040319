@@ -4,6 +4,16 @@
 {% block app_content %}
     <h1>{{ title }}</h1>
 
+    <!-- Category Selector -->
+    <form method="GET">
+        <select name="category_id" onchange="this.form.submit()">
+            <option value="">All Categories</option>
+            {% for category in categories %}
+                <option value="{{ category.id }}" {% if category.id == category_id %}selected{% endif %}>{{ category.name }}</option>
+            {% endfor %}
+        </select>
+    </form>
+
     <!-- Order Form -->
     <form method="POST">
         {{ form.hidden_tag() }}
