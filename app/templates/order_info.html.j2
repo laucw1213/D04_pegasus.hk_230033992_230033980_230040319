@@ -1,0 +1,16 @@
+<!-- order_info.html.j2 -->
+{% extends "base.html.j2" %}
+{% block app_content %}
+    <h1>Order Information</h1>
+    {% for order in orders %}
+        <div>
+            <h2>Order ID: {{ order.id }}</h2>
+            {% for product in order.products %}
+                <p>Product Name: {{ product.name }}</p>
+                <p>Product Price: {{ product.price }}</p>
+            {% else %}
+                <p>No products associated with this order.</p>
+            {% endfor %}
+        </div>
+    {% endfor %}
+{% endblock %}
