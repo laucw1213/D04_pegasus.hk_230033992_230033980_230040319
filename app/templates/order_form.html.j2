@@ -3,15 +3,24 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 {% block app_content %}
     <h1>{{ title }}</h1>
+    <!-- Product Search -->
+    <form method="GET">
+        <input type="text" name="query" placeholder="Search products" value="{{ request.args.get('query', '') }}">
+        <input type="submit" value="Search">
+    </form>
 
     <!-- Category Selector -->
-    <form method="GET">
-        <select name="category_id" onchange="this.form.submit()">
-            <option value="">All Categories</option>
-            {% for category in categories %}
-                <option value="{{ category.id }}" {% if category.id == category_id %}selected{% endif %}>{{ category.name }}</option>
-            {% endfor %}
-        </select>
+    <form method="POST" id="categoryForm">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            <label for="category">Category</label>
+            <select name="category" id="category" class="form-control" onchange="document.getElementById('categoryForm').submit();" style="max-height: 200px; overflow-y: auto;">
+                <option value="">All</option>
+                {% for category in categories %}
+                    <option value="{{ category.id }}">{{ category.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
     </form>
 
     <!-- Order Form -->
@@ -28,11 +37,7 @@
         <p>{{ form.submit() }}</p>
     </form>
 
-    <!-- Product Search -->
-    <form method="GET">
-        <input type="text" name="query" placeholder="Search products" value="{{ request.args.get('query', '') }}">
-        <input type="submit" value="Search">
-    </form>
+    
 
     <!-- Product List -->
     {% for product in products %}

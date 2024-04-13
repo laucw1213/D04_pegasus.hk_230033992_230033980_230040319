@@ -195,11 +195,16 @@ def unfollow(username):
 def order_form():
     form = OrderForm()
     query = request.args.get('query')  # 從請求參數中獲取查詢字串
+    categories = Category.query.all()
+    products = Product.query.all()  # Define products here
+
+    if request.method == 'POST':
+        category_id = request.form.get('category')
+        if category_id:
+            products = Product.query.filter_by(category_id=category_id).all()  # filter products by category
 
     if query:
         products = Product.query.filter(Product.name.contains(query)).all()  # 如果有查詢字串，則查詢名稱包含該字串的所有產品
-    else:
-        products = Product.query.all()  # 如果沒有查詢字串，則查詢所有的產品
 
     if form.validate_on_submit():
         product = Product.query.get(form.product_id.data)
@@ -212,10 +217,12 @@ def order_form():
             flash('Order created and product added successfully')
             return redirect(url_for('order_form'))
 
-    return render_template('order_form.html.j2', title='Order Form', form=form, products=products)
+    return render_template('order_form.html.j2', title='Order Form', form=form, products=products, categories=categories)
 
 @app.route('/order_info', methods=['GET', 'POST'])
 @login_required
 def order_info():
     orders = Order.query.all()
     return render_template('order_info.html.j2', orders=orders)
+
+
