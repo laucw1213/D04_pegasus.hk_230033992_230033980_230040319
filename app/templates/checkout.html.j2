@@ -1,0 +1,24 @@
+{% extends "base.html.j2" %}
+{% import 'bootstrap/wtf.html' as wtf %}
+{% block app_content %}
+<h1>Checkout</h1>
+
+<table>
+    <tr>
+        <th>Product</th>
+        <th>Price</th>
+    </tr>
+    {% for product in cart.products %}
+    <tr>
+        <td>{{ product.name }}</td>
+        <td>{{ product.price }}</td>
+    </tr>
+    {% endfor %}
+</table>
+
+<p>Total: {{ total_price }}</p>
+
+<form method="post">
+    <input type="submit" value="Checkout">
+</form>
+{% endblock %}

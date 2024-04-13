@@ -37,14 +37,16 @@
         <p>{{ form.submit() }}</p>
     </form>
 
-    
-
     <!-- Product List -->
     {% for product in products %}
         <div>
             <h2>Product ID: {{ product.id }}</h2>
             <h2>Product Name: {{ product.name }}</h2>
             <h2>Product Price: {{ product.price }}</h2>  <!-- 顯示產品價格 -->
+            <!-- Add to Cart Button -->
+            <form method="POST" action="{{ url_for('add_to_cart', product_id=product.id) }}">
+                <input type="submit" value="Add to Cart">
+            </form>
         </div>
     {% endfor %}
 {% endblock %}

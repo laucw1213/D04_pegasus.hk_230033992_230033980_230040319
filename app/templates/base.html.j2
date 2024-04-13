@@ -36,6 +36,12 @@
                     <li>
                         <a href="{{ url_for('order_info') }}">Order Info</a>
                     </li>
+                    <li>
+                        <a href="{{ url_for('view_cart') }}">View Cart</a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('checkout') }}">checkout</a>
+                    </li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     {% if current_user.is_anonymous %}

@@ -8,7 +8,7 @@ from flask_login import UserMixin
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
-
+from sqlalchemy.orm import relationship
 
 
 followers = db.Table(
@@ -98,6 +98,32 @@ orders_products = db.Table('orders_products',
     db.Column('product_id', db.Integer, db.ForeignKey('product.id'), primary_key=True)
 )
 
+carts_products = db.Table('carts_products',
+    db.Column('cart_id', db.Integer, db.ForeignKey('cart.id'), primary_key=True),
+    db.Column('product_id', db.Integer, db.ForeignKey('product.id'), primary_key=True)
+)
+
+cart_products = db.Table('cart_products',
+    db.Column('cart_id', db.Integer, db.ForeignKey('cart.id')),
+    db.Column('product_id', db.Integer, db.ForeignKey('product.id')),
+    db.Column('quantity', db.Integer)  # 新增一個 quantity 列來儲存每個產品的數量
+)
+
+class CartItem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    quantity = db.Column(db.Integer, default=1)
+
+    product_id = db.Column(db.Integer, db.ForeignKey('product.id'))
+    product = db.relationship('Product')
+
+    cart_id = db.Column(db.Integer, db.ForeignKey('cart.id'))
+
+class Cart(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    items = db.relationship('CartItem', backref='cart', lazy='dynamic')
+
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
 class Category(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), unique=True)
@@ -105,23 +131,32 @@ class Category(db.Model):
 
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(64), index=True, unique=True)
+    name = db.Column(db.String(64), index=True)
     price = db.Column(db.Float)
+    cart_id = db.Column(db.Integer, db.ForeignKey('cart.id'))
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
-    orders = db.relationship('Order', secondary=orders_products, backref=db.backref('order_products', lazy='dynamic'))
-    
+
+class OrderItem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    quantity = db.Column(db.Integer)
+
+    product_id = db.Column(db.Integer, db.ForeignKey('product.id'))
+    product = db.relationship('Product')
+
+    order_id = db.Column(db.Integer, db.ForeignKey('order.id'))
+
 class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    products = db.relationship('Product', secondary=orders_products, backref=db.backref('product_orders', lazy='dynamic'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    total = db.Column(db.Float)
+
+    # 建立與 User 類別的關聯
+    user = relationship('User', backref='orders')
+
+    # 建立與 OrderItem 類別的關聯
+    items = db.relationship('OrderItem', backref='order', lazy='dynamic')
 
     def add_product(self, product):
-        if not self.is_product_added(product):
-            self.products.append(product)
-    
-    def remove_product(self, product):
-        if self.is_product_added(product):
-            self.products.remove(product)
-
-    def is_product_added(self, product):
-        return product in self.products
-
+        order_item = OrderItem(product=product, order=self)
+        self.items.append(order_item)
+        db.session.commit()

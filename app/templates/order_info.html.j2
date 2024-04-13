@@ -3,14 +3,17 @@
 {% block app_content %}
     <h1>Order Information</h1>
     {% for order in orders %}
-        <div>
-            <h2>Order ID: {{ order.id }}</h2>
-            {% for product in order.products %}
-                <p>Product Name: {{ product.name }}</p>
-                <p>Product Price: {{ product.price }}</p>
-            {% else %}
-                <p>No products associated with this order.</p>
-            {% endfor %}
-        </div>
+        <h2>Order ID: {{ order.id }}</h2>
+        {% for item in order.items %}
+            <div>
+                <p>Product Name: {{ item.product.name }}</p>
+                <p>Product Description: {{ item.product.description }}</p>
+                <!-- Add more product details here -->
+            </div>
+        {% else %}
+            <p>No products associated with this order.</p>
+        {% endfor %}
+    {% else %}
+        <p>No orders found.</p>
     {% endfor %}
 {% endblock %}
