@@ -6,7 +6,6 @@ from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, \
 from flask_babel import _, lazy_gettext as _l
 from app.models import User
 
-
 class LoginForm(FlaskForm):
     username = StringField(_l('Username'), validators=[DataRequired()])
     password = PasswordField(_l('Password'), validators=[DataRequired()])
@@ -67,19 +66,11 @@ class EditProfileForm(FlaskForm):
 class PostForm(FlaskForm):
     post = TextAreaField(_l('Say something'), validators=[DataRequired()])
     submit = SubmitField(_l('Submit'))
-
-from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired
-
+    
 
 class OrderForm(FlaskForm):
     name = StringField('Name')
     order_id = IntegerField('Order ID')
-    product_id = IntegerField('Product ID')
-    product_category = SelectField('Product Category', choices=[])  # Add this line
-    submit = SubmitField('Submit')\
-    
-class OrderForm(FlaskForm):
     product_id = IntegerField('Product ID', validators=[DataRequired()])
-    submit = SubmitField('Create Order')
+    product_category = SelectField('Product Category', choices=[])  # Add this line
+    submit = SubmitField('Submit')

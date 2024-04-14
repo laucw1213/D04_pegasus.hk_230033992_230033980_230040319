@@ -198,7 +198,7 @@ def unfollow(username):
     return redirect(url_for('user', username=username))
 
 @app.route('/order_form', methods=['GET', 'POST'])
-@login_required
+
 def order_form():
     form = OrderForm()
     query = request.args.get('query')  # 從請求參數中獲取查詢字串
@@ -213,18 +213,30 @@ def order_form():
     if query:
         products = Product.query.filter(Product.name.contains(query)).all()  # 如果有查詢字串，則查詢名稱包含該字串的所有產品
 
-    if form.validate_on_submit():
-        product = Product.query.get(form.product_id.data)
-        if product is not None:
-            order = Order()
-            db.session.add(order)
-            db.session.commit()
-            order.add_product(product)
-            db.session.commit()
-            flash('Order created and product added successfully')
-            return redirect(url_for('order_form'))
+    # 獲取當前用戶的購物車
+    cart = Cart.query.get(session['cart_id'])
 
-    return render_template('order_form.html.j2', title='Order Form', form=form, products=products, categories=categories)
+    if cart is None:
+        # 如果 cart 為 None，則重定向到首頁
+        return redirect(url_for('index'))
+
+    # 獲取購物車中的產品信息
+    cart_items = [(item.product, item.quantity) for item in cart.items]
+
+    # 計算購物車中的總價
+    total_price = sum([item.product.price * item.quantity for item in cart.items])
+
+    # 計算購物車中的總數量
+    quantity_total = sum([item.quantity for item in cart.items])
+
+    # 計算總金額
+    grand_total = total_price
+
+    # 計算總金額加上運費
+    shipping_cost = 100  # 請根據您的運費策略設定這個值
+    grand_total_plus_shipping = grand_total + shipping_cost
+
+    return render_template('order_form.html.j2', title='Order Form', form=form, products=products, categories=categories, cart_items=cart_items, total_price=total_price, quantity_total=quantity_total, grand_total=grand_total, grand_total_plus_shipping=grand_total_plus_shipping)
 
 
 @app.route('/order_info', methods=['GET', 'POST'])
@@ -236,10 +248,10 @@ def order_info():
 
 
 
-@app.route('/add-to-cart/<int:product_id>', methods=['POST'])
-def add_to_cart(product_id):
-    # 從數據庫中獲取產品
-    product = Product.query.get_or_404(product_id)
+@app.route('/add_to_cart', methods=['POST'])
+def add_to_cart():
+    # 從表單數據中獲取產品 ID
+    product_id = request.form.get('product_id')
 
     # 獲取當前用戶的購物車
     cart_id = session.get('cart_id')
@@ -252,6 +264,9 @@ def add_to_cart(product_id):
     else:
         cart = Cart.query.get_or_404(cart_id)
 
+    # 從數據庫中獲取產品
+    product = Product.query.get_or_404(product_id)
+
     # 創建一個新的 CartItem 並將其添加到購物車中
     cart_item = CartItem(product=product, quantity=1)
     cart.items.append(cart_item)
@@ -259,10 +274,11 @@ def add_to_cart(product_id):
     # 將變更保存到數據庫中
     db.session.commit()
 
-    return redirect(url_for('view_cart'))
+    # 重定向回 order_form 頁面
+    return redirect(url_for('order_form'))
 
 @app.route('/view_cart')
-@login_required
+
 def view_cart():
     # 獲取當前用戶的購物車
     cart = Cart.query.get(session['cart_id'])
@@ -306,7 +322,7 @@ def remove_from_cart(product_id):
     return redirect(url_for('view_cart'))
 
 @app.route('/checkout', methods=['GET', 'POST'])
-@login_required
+
 def checkout():
     # 獲取當前用戶的購物車
     cart = Cart.query.get(session['cart_id'])

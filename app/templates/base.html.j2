@@ -33,28 +33,46 @@
                     <li>
                         <a href="{{ url_for('order_form') }}">Order Form</a>
                     </li>
-                    <li>
-                        <a href="{{ url_for('order_info') }}">Order Info</a>
-                    </li>
-                    <li>
-                        <a href="{{ url_for('view_cart') }}">View Cart</a>
-                    </li>
+                </ul>
+                <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">常見問題<b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="#">聯絡我們</a>
+                        </li>
+                        <li><a href="#">退貨及售後支援</a></li>
+                        <li><a href="#">購買流程</a></li>
+                        <li><a href="#">付款方式</a></li>
+                        <li><a href="#">除舊服務條款</a></li>
+                        <li><a href="#">飛馬電腦節2021</a></li>
+                         <li><a href="#">意見回饋</a></li>
+                        <li><a href="#">關於我們</a></li>
+                    </ul>
+                </li>
                     <li>
                         <a href="{{ url_for('checkout') }}">checkout</a>
                     </li>
-                </ul>
-                <ul class="nav navbar-nav navbar-right">
                     {% if current_user.is_anonymous %}
                         <li>
                             <a href="{{ url_for('login') }}">{{ _('Login') }}</a>
                         </li>
                     {% else %}
-                        <li>
-                            <a href="{{ url_for('user', username=current_user.username) }}">{{ _('Profile') }}</a>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">user<b class="caret"></b></a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="{{ url_for('user', username=current_user.username) }}">{{ _('Profile') }}</a>
+                                </li>
+                                <li>
+                                    <a href="{{ url_for('order_info') }}">Order Info</a>
+                                </li>
+                                <li>
+                                    <a href="{{ url_for('logout') }}">{{ _('Logout') }}</a>
+                                </li>
+                            </ul>
                         </li>
-                        <li>
-                            <a href="{{ url_for('logout') }}">{{ _('Logout') }}</a>
-                        </li>
+                        
                     {% endif %}
                 </ul>
             </div>

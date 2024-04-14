@@ -17,8 +17,10 @@
 </table>
 
 <p>Total: {{ total_price }}</p>
-
 <form method="post">
-    <input type="submit" value="Checkout">
+    <input type="submit" value="Checkout" {% if not current_user.is_authenticated %}disabled{% endif %}>
+    {% if not current_user.is_authenticated %}
+    <span>Please log in to proceed with checkout.</span>
+    {% endif %}
 </form>
 {% endblock %}
