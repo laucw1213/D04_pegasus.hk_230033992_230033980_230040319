@@ -279,32 +279,6 @@ def add_to_cart():
     # 重定向回 order_form 頁面
     return redirect(url_for('order_form'))
 
-@app.route('/view_cart')
-def view_cart():
-    # 獲取當前用戶的購物車
-    cart = Cart.query.get(session['cart_id'])
-
-    if cart is None:
-        # 如果 cart 為 None，則重定向到首頁
-        return redirect(url_for('index'))
-
-    # 獲取購物車中的產品信息
-    cart_items = [(item.product, item.quantity) for item in cart.items]
-
-    # 計算購物車中的總價
-    total_price = sum([item.product.price * item.quantity for item in cart.items])
-
-    # 計算購物車中的總數量
-    quantity_total = sum([item.quantity for item in cart.items])
-
-    # 計算總金額
-    grand_total = total_price
-
-    # 計算總金額加上運費
-    shipping_cost = 100  # 請根據您的運費策略設定這個值
-    grand_total_plus_shipping = grand_total + shipping_cost
-
-    return render_template('view_cart.html.j2', cart_items=cart_items, total_price=total_price, quantity_total=quantity_total, grand_total=grand_total, grand_total_plus_shipping=grand_total_plus_shipping)
 
 @app.route('/remove-from-cart/<int:product_id>')
 def remove_from_cart(product_id):
@@ -320,7 +294,7 @@ def remove_from_cart(product_id):
     # 將變更保存到數據庫中
     db.session.commit()
 
-    return redirect(url_for('view_cart'))
+    return redirect(url_for('order_form'))
 
 @app.route('/checkout', methods=['GET', 'POST'])
 
