@@ -378,3 +378,12 @@ def order_confirmation(order_id):
     if order is None or order.user_id != current_user.id:
         abort(404)
     return render_template('order_confirmation.html.j2', order=order)
+
+@app.route('/add_product', methods=['GET'])
+def add_product():
+    with open('static/img/4090.jpg', 'rb') as img_file:
+        binary_data = img_file.read()
+    new_product = Product(name='Product 1', image_data=binary_data)
+    db.session.add(new_product)
+    db.session.commit()
+    return 'Product added to database.'

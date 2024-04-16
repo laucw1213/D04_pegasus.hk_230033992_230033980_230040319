@@ -25,6 +25,8 @@ db.session.add(p2)
 category1 = Category(name='CPU')
 category2 = Category(name='Display Card')
 
+
+
 db.session.add(category1)
 db.session.add(category2)
 

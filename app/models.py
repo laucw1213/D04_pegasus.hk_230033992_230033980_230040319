@@ -135,6 +135,8 @@ class Product(db.Model):
     price = db.Column(db.Float)
     cart_id = db.Column(db.Integer, db.ForeignKey('cart.id'))
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
+    
+    image_data = db.Column(db.LargeBinary, nullable=True)
 
 class OrderItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -160,3 +162,10 @@ class Order(db.Model):
         order_item = OrderItem(product=product, order=self)
         self.items.append(order_item)
         db.session.commit()
+
+class Product1(db.Model):
+    id1 = db.Column(db.Integer, primary_key=True)
+    name1 = db.Column(db.String(64), index=True)
+    price1 = db.Column(db.Float)
+    cart_id1 = db.Column(db.Integer, db.ForeignKey('cart.id'))
+    category_id1 = db.Column(db.Integer, db.ForeignKey('category.id'))
