@@ -61,10 +61,10 @@
                 <ul class="list-group">
                     <li class="list-group-item">
                         <p>
-                            {{ quantity_total }} Items <strong class="pull-right">&dollar;{{ grand_total / 100 }}</strong>
+                            {{ quantity_total }} Items <strong class="pull-right">&dollar;{{ grand_total}}</strong>
                         </p>
                         <p>
-                            24hr Shipping <strong class="pull-right">&dollar;10</strong>
+                            24hr Shipping <strong class="pull-right">&dollar;100</strong>
                         </p>
                     </li>
                     {% for item, quantity in cart_items %}
@@ -75,7 +75,7 @@
                     {% endfor %}
                     <li class="list-group-item">
                         <p>
-                            Total <strong class="pull-right">&dollar;{{ grand_total_plus_shipping / 100 }}</strong>
+                            Total <strong class="pull-right">&dollar;{{ grand_total_plus_shipping}}</strong>
                         </p>
                     </li>
                 </ul>

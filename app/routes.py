@@ -320,6 +320,7 @@ def remove_from_cart(product_id):
     return redirect(url_for('view_cart'))
 
 @app.route('/checkout', methods=['GET', 'POST'])
+
 def checkout():
     # 獲取當前用戶的購物車
     cart = Cart.query.get(session['cart_id'])
