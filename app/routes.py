@@ -198,7 +198,6 @@ def unfollow(username):
     return redirect(url_for('user', username=username))
 
 @app.route('/order_form', methods=['GET', 'POST'])
-
 def order_form():
     form = OrderForm()
     query = request.args.get('query')  # 從請求參數中獲取查詢字串
@@ -278,7 +277,6 @@ def add_to_cart():
     return redirect(url_for('order_form'))
 
 @app.route('/view_cart')
-
 def view_cart():
     # 獲取當前用戶的購物車
     cart = Cart.query.get(session['cart_id'])
