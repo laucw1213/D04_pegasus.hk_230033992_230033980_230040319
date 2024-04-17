@@ -114,7 +114,7 @@ class CartItem(db.Model):
     cart_id = db.Column(db.Integer, db.ForeignKey('cart.id'))
     product_id = db.Column(db.Integer, db.ForeignKey('product.id'))
     quantity = db.Column(db.Integer)
-    position = db.Column(db.Integer)  # 新增的屬性
+    product = db.relationship('Product', backref='cart_items')
 
 class Cart(db.Model):
     id = db.Column(db.Integer, primary_key=True)
