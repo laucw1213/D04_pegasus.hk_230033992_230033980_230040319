@@ -111,12 +111,10 @@ cart_products = db.Table('cart_products',
 
 class CartItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    quantity = db.Column(db.Integer, default=1)
-
-    product_id = db.Column(db.Integer, db.ForeignKey('product.id'))
-    product = db.relationship('Product')
-
     cart_id = db.Column(db.Integer, db.ForeignKey('cart.id'))
+    product_id = db.Column(db.Integer, db.ForeignKey('product.id'))
+    quantity = db.Column(db.Integer)
+    position = db.Column(db.Integer)  # 新增的屬性
 
 class Cart(db.Model):
     id = db.Column(db.Integer, primary_key=True)
