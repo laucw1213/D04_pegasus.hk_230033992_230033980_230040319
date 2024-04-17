@@ -262,36 +262,39 @@ def order_info():
 
 
 @app.route('/add_to_cart', methods=['POST'])
+@login_required
 def add_to_cart():
-    # 從表單數據中獲取產品 ID
     product_id = request.form.get('product_id')
+    product = Product.query.get_or_404(product_id)
 
-    # 獲取當前用戶的購物車
-    cart_id = session.get('cart_id')
-
-    if cart_id is None:
-        # 如果 cart_id 為 None，則創建一個新的購物車
+    # 檢查 'cart_id' 是否在 session 中
+    if 'cart_id' not in session:
+        # 如果 'cart_id' 不存在，則創建一個新的購物車
         cart = Cart()
         cart.items = []  # 確保 cart.items 是一個列表
         db.session.add(cart)
         db.session.commit()
+
+        # 將新的 'cart_id' 存儲到 session 中
         session['cart_id'] = cart.id
     else:
-        cart = Cart.query.get_or_404(cart_id)
+        # 如果 'cart_id' 存在，則繼續處理
+        cart = Cart.query.get_or_404(session['cart_id'])
 
-    # 從數據庫中獲取產品
-    product = Product.query.get_or_404(product_id)
+    # 檢查產品是否已經在購物車中
+    for item in cart.items:
+        if item.product_id == product.id:
+            # 如果產品已經在購物車中，則增加數量
+            item.quantity += 1
+            db.session.commit()
+            return redirect(url_for('order_form'))
 
-    # 獲取購物車中的所有項目
-    items = CartItem.query.filter_by(cart_id=cart.id).all()
-
-    # 創建一個新的 CartItem 並將其添加到購物車中
+    # 如果產品不在購物車中，則添加新的項目到購物車
     cart_item = CartItem(product_id=product.id, cart_id=cart.id, quantity=1)
     db.session.add(cart_item)
     cart.items.append(cart_item)  # 將新的 CartItem 添加到 cart.items 中
     db.session.commit()
 
-    # 重定向回 order_form 頁面
     return redirect(url_for('order_form'))
 
 @app.route('/remove_from_cart/<int:item_id>', methods=['POST'])
