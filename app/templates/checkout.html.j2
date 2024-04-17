@@ -16,7 +16,7 @@
     {% endfor %}
 </table>
 
-<p>Total: {{ total_price }}</p>
+<p>Total: {{ grand_total_plus_shipping }}</p>
 <form method="post">
     <input type="submit" value="Checkout" {% if not current_user.is_authenticated %}disabled{% endif %}>
     {% if not current_user.is_authenticated %}

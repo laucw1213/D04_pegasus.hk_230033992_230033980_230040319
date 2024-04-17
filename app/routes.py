@@ -201,6 +201,7 @@ def unfollow(username):
     return redirect(url_for('user', username=username))
 
 @app.route('/order_form', methods=['GET', 'POST'])
+@login_required
 def order_form():
     form = OrderForm()
     query = request.args.get('query')  # 從請求參數中獲取查詢字串
@@ -215,18 +216,28 @@ def order_form():
     if query:
         products = Product.query.filter(Product.name.contains(query)).all()  # 如果有查詢字串，則查詢名稱包含該字串的所有產品
 
-    # 獲取當前用戶的購物車
-    cart = Cart.query.get(session['cart_id'])
+    # 檢查 'cart_id' 是否在 session 中
+    if 'cart_id' not in session:
+        # 如果 'cart_id' 不存在，則創建一個新的購物車
+        cart = Cart()
+        db.session.add(cart)
+        db.session.commit()
+
+        # 將新的 'cart_id' 存儲到 session 中
+        session['cart_id'] = cart.id
+    else:
+        # 如果 'cart_id' 存在，則繼續處理
+        cart = Cart.query.get(session['cart_id'])
 
     if cart is None:
-        # 如果 cart 為 None，則重定向到首頁
+        flash('No cart found.')
         return redirect(url_for('index'))
 
     # 獲取購物車中的產品信息
-    cart_items = [(item.product, item.quantity) for item in cart.items]
+    cart_items = [(Product.query.get(item.product_id), item.quantity) for item in cart.items]
 
     # 計算購物車中的總價
-    total_price = sum([item.product.price * item.quantity for item in cart.items])
+    total_price = sum([Product.query.get(item.product_id).price * item.quantity for item in cart.items])
 
     # 計算購物車中的總數量
     quantity_total = sum([item.quantity for item in cart.items])
@@ -257,9 +268,11 @@ def add_to_cart():
 
     # 獲取當前用戶的購物車
     cart_id = session.get('cart_id')
+
     if cart_id is None:
         # 如果 cart_id 為 None，則創建一個新的購物車
         cart = Cart()
+        cart.items = []  # 確保 cart.items 是一個列表
         db.session.add(cart)
         db.session.commit()
         session['cart_id'] = cart.id
@@ -269,61 +282,73 @@ def add_to_cart():
     # 從數據庫中獲取產品
     product = Product.query.get_or_404(product_id)
 
-    # 創建一個新的 CartItem 並將其添加到購物車中
-    cart_item = CartItem(product=product, quantity=1)
-    cart.items.append(cart_item)
+    # 獲取購物車中的所有項目
+    items = CartItem.query.filter_by(cart_id=cart.id).all()
 
-    # 將變更保存到數據庫中
+    # 創建一個新的 CartItem 並將其添加到購物車中
+    cart_item = CartItem(product_id=product.id, cart_id=cart.id, quantity=1)
+    db.session.add(cart_item)
+    cart.items.append(cart_item)  # 將新的 CartItem 添加到 cart.items 中
     db.session.commit()
 
     # 重定向回 order_form 頁面
     return redirect(url_for('order_form'))
 
-@app.route('/view_cart')
-def view_cart():
+@app.route('/remove_from_cart/<int:item_id>', methods=['POST'])
+def remove_from_cart(item_id):
     # 獲取當前用戶的購物車
-    cart = Cart.query.get(session['cart_id'])
+    cart_id = session.get('cart_id')
+    print(f"Cart ID: {cart_id}")  # 打印購物車 ID
 
-    if cart is None:
-        # 如果 cart 為 None，則重定向到首頁
-        return redirect(url_for('index'))
+    if cart_id is not None:
+        # 從數據庫中獲取購物車
+        cart = Cart.query.get_or_404(cart_id)
+        print(f"Cart: {cart}")  # 打印購物車
 
-    # 獲取購物車中的產品信息
-    cart_items = [(item.product, item.quantity) for item in cart.items]
+        # 根據 id 選擇要刪除的項目
+        item = CartItem.query.filter_by(cart_id=cart.id, product_id=item_id).first()
+        if item is not None:
+            print(f"Item: {item}")  # 打印購物車項目
+            db.session.delete(item)
+            print("Item deleted")  # 打印刪除信息
+            db.session.commit()
+            print("Changes committed")  # 打印提交信息
+        else:
+            print(f"Error: No item with id {item_id} in cart {cart.id}")
+            flash(f"Error: No item with id {item_id} in cart {cart.id}", 'error')
 
-    # 計算購物車中的總價
-    total_price = sum([item.product.price * item.quantity for item in cart.items])
+    return redirect(url_for('order_form'))
 
-    # 計算購物車中的總數量
-    quantity_total = sum([item.quantity for item in cart.items])
-
-    # 計算總金額
-    grand_total = total_price
-
-    # 計算總金額加上運費
-    shipping_cost = 100  # 請根據您的運費策略設定這個值
-    grand_total_plus_shipping = grand_total + shipping_cost
-
-    return render_template('view_cart.html.j2', cart_items=cart_items, total_price=total_price, quantity_total=quantity_total, grand_total=grand_total, grand_total_plus_shipping=grand_total_plus_shipping)
-
-@app.route('/remove-from-cart/<int:product_id>')
-def remove_from_cart(product_id):
-    # 從數據庫中獲取產品
-    product = Product.query.get_or_404(product_id)
-
+@app.route('/clear_cart')
+def clear_cart():
     # 獲取當前用戶的購物車
-    cart = Cart.query.get_or_404(session['cart_id'])
+    cart_id = session.get('cart_id')
+    print(f"Cart ID: {cart_id}")  # 打印購物車 ID
 
-    # 從購物車中移除產品
-    cart.products.remove(product)
+    if cart_id is not None:
+        # 從數據庫中獲取購物車
+        cart = Cart.query.get_or_404(cart_id)
+        print(f"Cart: {cart}")  # 打印購物車
 
-    # 將變更保存到數據庫中
-    db.session.commit()
+        # 清空購物車
+        for item in cart.items:
+            print(f"Item: {item}")  # 打印購物車項目
 
-    return redirect(url_for('view_cart'))
+            # 刪除關聯表中的記錄
+            db.session.delete(item)
+            print("Item deleted")  # 打印刪除信息
+
+        # 提交變更到數據庫
+        db.session.commit()
+        print("Changes committed")  # 打印提交信息
+
+        # 從 session 中移除購物車 ID
+        session.pop('cart_id')
+        print("Cart ID removed from session")  # 打印移除信息
+
+    return redirect(url_for('order_form'))
 
 @app.route('/checkout', methods=['GET', 'POST'])
-
 def checkout():
     # 獲取當前用戶的購物車
     cart = Cart.query.get(session['cart_id'])

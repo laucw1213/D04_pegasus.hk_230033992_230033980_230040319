@@ -50,8 +50,7 @@
                 </div>
             {% endfor %}
         </div>
-            
-            <!-- Cart Summary -->
+        <!-- Cart Summary -->
         <div class="col-lg-4">
             <h3 class="bold">
                 <i class="glyphicon glyphicon-th-list"></i> Cart Summary
@@ -61,7 +60,7 @@
                 <ul class="list-group">
                     <li class="list-group-item">
                         <p>
-                            {{ quantity_total }} Items <strong class="pull-right">&dollar;{{ grand_total}}</strong>
+                            {{ quantity_total }} Items <strong class="pull-right">&dollar;{{ grand_total }}</strong>
                         </p>
                         <p>
                             24hr Shipping <strong class="pull-right">&dollar;100</strong>
@@ -71,11 +70,15 @@
                         <li class="list-group-item">
                             <p>Product Name: {{ item.name }}</p>
                             <p>Quantity: {{ quantity }}</p>
+                            <!-- 添加一個 "Remove" 按鈕 -->
+                            <form action="{{ url_for('remove_from_cart', item_id=item.id) }}" method="post">
+                                <input type="submit" value="Remove">
+                            </form>
                         </li>
                     {% endfor %}
                     <li class="list-group-item">
                         <p>
-                            Total <strong class="pull-right">&dollar;{{ grand_total_plus_shipping}}</strong>
+                            Total <strong class="pull-right">&dollar;{{ grand_total_plus_shipping }}</strong>
                         </p>
                     </li>
                 </ul>
@@ -84,17 +87,17 @@
                         <a href="{{ url_for('checkout') }}" class="btn btn-primary btn-sm">
                             Checkout <i class="glyphicon glyphicon-chevron-right"></i>
                         </a>
+                        <a href="{{ url_for('clear_cart') }}"
+                           class="btn btn-danger btn-sm pull-right">
+                            Clear Cart <i class="glyphicon glyphicon-trash"></i>
+                        </a>
                     {% else %}
                         <a href="#" class="btn btn-primary btn-sm">
                             Checkout <i class="glyphicon glyphicon-chevron-right"></i>
                         </a>
                     {% endif %}
-                    <a href="{{ url_for('order_form') }}"
-                        class="btn btn-link btn-sm pull-right">
-                        <i class="glyphicon glyphicon-chevron-left"></i> Continue Shopping
-                    </a>
                 </div>
             </div>
         </div>
     </div>
-    {% endblock %}
+{% endblock %}
