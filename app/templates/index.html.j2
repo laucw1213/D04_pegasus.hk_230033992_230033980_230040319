@@ -1,7 +1,149 @@
 {% extends "base.html.j2" %}
 {% import 'bootstrap/wtf.html' as wtf %}
 {% block app_content %}
-    <div id="myCarousel" class="carousel slide" data-ride="carousel">
+    <style>
+    .dropdown-content {
+        display: none;
+    }
+    .dropdown .dropbtn {
+    width: 220px;  /* 設定按鈕寬度 */
+    height: 50px;  /* 設定按鈕高度 */
+    border: none;  /* 移除按鈕邊框 */
+    background: transparent;  /* 設定按鈕背景為透明 */
+    text-align: left;  /* 文字靠左對齊 */
+}
+    </style>
+    <div class="col-lg-3">
+        <div class="row-fluid">
+            <div class="span3">
+                <div class="well sidebar-nav">
+                    <ul class="nav nav-list">
+                        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+                        <div class="dropdown">
+                            <button class="dropbtn">中央處理器</button>
+                            <div class="dropdown-content">
+                                <li>
+                                    <a href="/cpu/intel">Intel</a>
+                                </li>
+                                <li>
+                                    <a href="/cpu/amd">AMD</a>
+                                </li>
+                            </div>
+                        </div>
+                        <div class="dropdown">
+                            <button class="dropbtn">電腦散熱</button>
+                            <div class="dropdown-content">
+                                <li>
+                                    <a href="/cooling/air-coolers">風冷散熱器 (塔散)</a>
+                                </li>
+                                <li>
+                                    <a href="/cooling/water-coolers">水冷散熱器</a>
+                                </li>
+                                <li>
+                                    <a href="/cooling/thermal-paste">散熱膏</a>
+                                </li>
+                                <li>
+                                    <a href="/cooling/thermal-pad">散熱貼</a>
+                                </li>
+                                <li>
+                                    <a href="/cooling/case-fans">機箱風扇</a>
+                                </li>
+                            </div>
+                        </div>
+                        <div class="dropdown">
+                            <button class="dropbtn">
+                                顯示卡
+                            </button>
+                            <div class="dropdown-content">
+                                <li><a href="/graphics-cards/geforce">GeForce</a></li>
+                                <li><a href="/graphics-cards/amd">AMD</a></li>
+                                <li><a href="/graphics-cards/intel">Intel</a></li>
+                                <li><a href="/graphics-cards/quadro">Quadro</a></li>
+                            </div>
+                        </div>
+                        <div class="dropdown">
+                            <button class="dropbtn">
+                                RAM
+                            </button>
+                            <div class="dropdown-content">
+                                <li><a href="/ram/ddr5">DDR5</a></li>
+                                <li><a href="/ram/ddr4">DDR4</a></li>
+                                <li><a href="/ram/sodimm">SODIMM</a></li>
+                            </div>
+                        </div>
+                        <div class="dropdown">
+                            <button class="dropbtn">
+                                儲存裝置
+                            </button>
+                            <div class="dropdown-content">
+                                <li><a href="/storage/ssd">SSD</a></li>
+                                <li><a href="/storage/hdd">HDD</a></li>
+                            </div>
+                        </div>
+                        <div class="dropdown">
+                            <button class="dropbtn">
+                                機箱
+                            </button>
+                            <div class="dropdown-content">
+                                <li><a href="/cases/atx">ATX 機箱</a></li>
+                                <li><a href="/cases/matx">MATX 機箱</a></li>
+                                <li><a href="/cases/eatx">EATX 機箱</a></li>
+                                <li><a href="/cases/itx">ITX 機箱</a></li>
+                                <li><a href="/cases/accessories">機箱配件</a></li>
+                            </div>
+                        </div>
+                        <div class="dropdown">
+                            <button class="dropbtn">
+                                主機板
+                            </button>
+                            <div class="dropdown-content">
+                                <li><a href="/motherboards/atx">ATX 主機板</a></li>
+                                <li><a href="/motherboards/matx">MATX 主機板</a></li>
+                                <li><a href="/motherboards/eatx">EATX 主機板</a></li>
+                                <li><a href="/motherboards/itx">ITX 主機板</a></li>
+                                <li><a href="/motherboards/pcie-cards">PCIE 擴展卡</a></li>
+                            </div>
+                        </div>
+                        <div class="dropdown">
+                            <button class="dropbtn">
+                                顯示卡配件
+                            </button>
+                            <div class="dropdown-content">
+                                <li><a href="/graphics-card-accessories/brackets">顯示卡支架</a></li>
+                                <li><a href="/graphics-card-accessories/riser-cables">延長線 Riser Cable</a></li>
+                                <li><a href="/graphics-card-accessories/vertical-brackets">顯示卡直立支架</a></li>
+                            </div>
+                        </div>
+                        <div class="dropdown">
+                            <button class="dropbtn">
+                                電源供應器
+                            </button>
+                            <div class="dropdown-content">
+                                <li><a href="/power-supplies/600w-or-less">600W 或以下</a></li>
+                                <li><a href="/power-supplies/650w-to-800w">650W-800W</a></li>
+                                <li><a href="/power-supplies/850w-to-1000w">850W-1000W</a></li>
+                                <li><a href="/power-supplies/1050w-to-1200w">1050W-1200W</a></li>
+                                <li><a href="/power-supplies/1250w-or-more">1250W 或以上</a></li>
+                            </div>
+                        </div>
+                        <div class="dropdown">
+                            <button class="dropbtn">
+                                軟件
+                            </button>
+                            <div class="dropdown-content">
+                                <li><a href="/software/operating-systems">作業系統</a></li>
+                                <li><a href="/software/applications">應用程式</a></li>
+                            </div>
+                        </div>
+                    </ul>
+                </div>
+                <!--/.well -->
+            </div>
+            <!--/span-->
+        </div>
+    </div>
+    <div class="col-lg-9">
+        <div id="myCarousel" class="carousel slide" data-ride="carousel">
         <!-- Indicators -->
         <ol class="carousel-indicators">
             <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
@@ -11,7 +153,7 @@
         <!-- Wrapper for slides -->
         <div class="carousel-inner">
             <div class="item active">
-                <img src="{{ url_for('static', filename='img/4090.jpg') }}" alt="Image 1">
+                <img src="{{ url_for('static', filename='img/1600w.avif') }}" alt="Image 1">
                 <div class="carousel-caption">
                     <h3>Title 1</h3>
                     <p>Paragraph 1</p>
@@ -21,7 +163,7 @@
                 </div>
             </div>
             <div class="item">
-                <img src="{{ url_for('static', filename='img/4080.jpg') }}" alt="Image 2">
+                <img src="{{ url_for('static', filename='img/1600w (1).avif') }}" alt="Image 2">
                 <div class="carousel-caption">
                     <h3>Title 2</h3>
                     <p>Paragraph 2</p>
@@ -31,7 +173,7 @@
                 </div>
             </div>
             <div class="item">
-                <img src="{{ url_for('static', filename='img/img3.jpg') }}" alt="Image 3">
+                <img src="{{ url_for('static', filename='img/1600w (2).avif') }}" alt="Image 3">
                 <div class="carousel-caption">
                     <h3>Title 3</h3>
                     <p>Paragraph 3</p>
@@ -51,120 +193,6 @@
             <span class="sr-only">Next</span>
         </a>
     </div>
-    <div class="col-lg-3">
-        <div class="row-fluid">
-            <div class="span3">
-                <div class="well sidebar-nav">
-                    <ul class="nav nav-list">
-                        <div class="dropdown">
-                            <button class="dropbtn">中央處理器</button>
-                            <div class="dropdown-content">
-                                <a href="/cpu/intel">Intel</a>
-                                <a href="/cpu/amd">AMD</a>
-                            </div>
-                        </div>
-                        <div class="dropdown">
-                            <button class="dropbtn">電腦散熱</button>
-                            <div class="dropdown-content">
-                                <a href="/cooling/air-coolers">風冷散熱器 (塔散)</a>
-                                <a href="/cooling/water-coolers">水冷散熱器</a>
-                                <a href="/cooling/thermal-paste">散熱膏</a>
-                                <a href="/cooling/thermal-pad">散熱貼</a>
-                                <a href="/cooling/case-fans">機箱風扇</a>
-                            </div>
-                        </div>
-                        <div class="dropdown">
-                            <button class="dropbtn">顯示卡</button>
-                            <div class="dropdown-content">
-                                <a href="/graphics-cards/geforce">GeForce</a>
-                                <a href="/graphics-cards/amd">AMD</a>
-                                <a href="/graphics-cards/intel">Intel</a>
-                                <a href="/graphics-cards/quadro">Quadro</a>
-                            </div>
-                        </div>
-                        <div class="dropdown">
-                            <button class="dropbtn">
-                                RAM
-                            </button>
-                            <div class="dropdown-content">
-                                <a href="/ram/ddr5">DDR5</a>
-                                <a href="/ram/ddr4">DDR4</a>
-                                <a href="/ram/sodimm">SODIMM</a>
-                            </div>
-                        </div>
-                        <div class="dropdown">
-                            <button class="dropbtn">
-                                儲存裝置
-                            </button>
-                            <div class="dropdown-content">
-                                <a href="/storage/ssd">SSD</a>
-                                <a href="/storage/hdd">HDD</a>
-                            </div>
-                        </div>
-                        <div class="dropdown">
-                            <button class="dropbtn">
-                                機箱
-                            </button>
-                            <div class="dropdown-content">
-                                <a href="/cases/atx">ATX 機箱</a>
-                                <a href="/cases/matx">MATX 機箱</a>
-                                <a href="/cases/eatx">EATX 機箱</a>
-                                <a href="/cases/itx">ITX 機箱</a>
-                                <a href="/cases/accessories">機箱配件</a>
-                            </div>
-                        </div>
-                        <div class="dropdown">
-                            <button class="dropbtn">
-                                主機板
-                            </button>
-                            <div class="dropdown-content">
-                                <a href="/motherboards/atx">ATX 主機板</a>
-                                <a href="/motherboards/matx">MATX 主機板</a>
-                                <a href="/motherboards/eatx">EATX 主機板</a>
-                                <a href="/motherboards/itx">ITX 主機板</a>
-                                <a href="/motherboards/pcie-cards">PCIE 擴展卡</a>
-                            </div>
-                        </div>
-                        <div class="dropdown">
-                            <button class="dropbtn">
-                                顯示卡配件
-                            </button>
-                            <div class="dropdown-content">
-                                <a href="/graphics-card-accessories/brackets">顯示卡支架</a>
-                                <a href="/graphics-card-accessories/riser-cables">延長線 Riser Cable</a>
-                                <a href="/graphics-card-accessories/vertical-brackets">顯示卡直立支架</a>
-                            </div>
-                        </div>
-                        <div class="dropdown">
-                            <button class="dropbtn">
-                                電源供應器
-                            </button>
-                            <div class="dropdown-content">
-                                <a href="/power-supplies/600w-or-less">600W 或以下</a>
-                                <a href="/power-supplies/650w-to-800w">650W-800W</a>
-                                <a href="/power-supplies/850w-to-1000w">850W-1000W</a>
-                                <a href="/power-supplies/1050w-to-1200w">1050W-1200W</a>
-                                <a href="/power-supplies/1250w-or-more">1250W 或以上</a>
-                            </div>
-                        </div>
-                        <div class="dropdown">
-                            <button class="dropbtn">
-                                軟件
-                            </button>
-                            <div class="dropdown-content">
-                                <a href="/software/operating-systems">作業系統</a>
-                                <a href="/software/applications">應用程式</a>
-                            </div>
-                        </div>
-                        
-                    </ul>
-                </div>
-                <!--/.well -->
-            </div>
-            <!--/span-->
-        </div>
-    </div>
-    <div class="col-lg-9">
         <div class="categories-main svelte-1t16q48">
             <div class="categories-list svelte-1t16q48">
                 <table>
@@ -713,4 +741,15 @@
             </div>
         </div>
     </div>
+    <script>
+    $(document).ready(function(){
+        $(".dropbtn").click(function(){
+            // Hide all other dropdown contents
+            $(".dropdown-content").not($(this).next(".dropdown-content")).hide();
+
+            // Toggle the visibility of the clicked dropdown content
+            $(this).next(".dropdown-content").toggle();
+        });
+    });
+    </script>
 {% endblock %}
