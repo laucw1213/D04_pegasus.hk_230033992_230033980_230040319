@@ -24,29 +24,33 @@ def staticfiles(filename):
 
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
-@login_required
 def index():
     form = PostForm()
     if form.validate_on_submit():
-        post = Post(body=form.post.data, author=current_user)
-        db.session.add(post)
-        db.session.commit()
-        flash(_('Your post is now live!'))
-        return redirect(url_for('index'))
+        if current_user.is_authenticated:
+            post = Post(body=form.post.data, author=current_user)
+            db.session.add(post)
+            db.session.commit()
+            flash(_('Your post is now live!'))
+            return redirect(url_for('index'))
     page = request.args.get('page', 1, type=int)
-    posts = current_user.followed_posts().paginate(
-        page=page, per_page=app.config["POSTS_PER_PAGE"], error_out=False)
+    if current_user.is_authenticated:
+        posts = current_user.followed_posts().paginate(
+            page=page, per_page=app.config["POSTS_PER_PAGE"], error_out=False)
+        cart = Cart(user_id=current_user.id)
+        db.session.add(cart)
+        db.session.commit()
+
+        # 將購物車的 ID 保存到 session 中
+        session['cart_id'] = cart.id
+    else:
+        posts = Post.query.order_by(Post.timestamp.desc()).paginate(
+            page=page, per_page=app.config["POSTS_PER_PAGE"], error_out=False)
     next_url = url_for(
         'index', page=posts.next_num) if posts.next_num else None
     prev_url = url_for(
         'index', page=posts.prev_num) if posts.prev_num else None
-    cart = Cart(user_id=current_user.id)
-    db.session.add(cart)
-    db.session.commit()
-
-    # 將購物車的 ID 保存到 session 中
-    session['cart_id'] = cart.id
-    return render_template('index.html.j2', title=_('Home'), form=form,
+    return render_template('index.html.j2', title=_(''), form=form,
                            posts=posts.items, next_url=next_url,
                            prev_url=prev_url)
 
@@ -81,7 +85,7 @@ def login():
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('index')
         return redirect(next_page)
-    return render_template('login.html.j2', title=_('Sign In'), form=form)
+    return render_template('login.html.j2', title=_('登入'), form=form)
 
 
 @app.route('/logout')
@@ -212,9 +216,10 @@ def order_form():
 
     if request.method == 'POST':
         category_id = request.form.get('category')
-        if category_id:
+        if category_id == 'all':
+            products = Product.query.all()
+        else:
             products = Product.query.filter_by(category_id=category_id).all()  # filter products by category
-
     if query:
         products = Product.query.filter(Product.name.contains(query)).all()  # 如果有查詢字串，則查詢名稱包含該字串的所有產品
 
@@ -251,7 +256,7 @@ def order_form():
     shipping_cost = 100  # 請根據您的運費策略設定這個值
     grand_total_plus_shipping = grand_total + shipping_cost
 
-    return render_template('order_form.html.j2', title='Order Form', form=form, products=products, categories=categories, cart_items=cart_items, total_price=total_price, quantity_total=quantity_total, grand_total=grand_total, grand_total_plus_shipping=grand_total_plus_shipping)
+    return render_template('order_form.html.j2', title='自選砌機', form=form, products=products, categories=categories, cart_items=cart_items, total_price=total_price, quantity_total=quantity_total, grand_total=grand_total, grand_total_plus_shipping=grand_total_plus_shipping)
 
 
 @app.route('/order_info', methods=['GET', 'POST'])
@@ -261,7 +266,18 @@ def order_info():
     order = orders[0] if orders else None
     return render_template('order_info.html.j2', orders=orders, order=order)
 
+@app.route('/delete_order/<int:order_id>', methods=['POST'])
+@login_required
+def delete_order(order_id):
+    order = Order.query.get_or_404(order_id)
+    if order.user_id != current_user.id:
+        flash('You do not have permission to delete this order.', 'error')
+        return redirect(url_for('order_info'))
 
+    db.session.delete(order)
+    db.session.commit()
+    flash('Order has been deleted.', 'success')
+    return redirect(url_for('order_info'))
 
 @app.route('/add_to_cart', methods=['POST'])
 @login_required
@@ -450,38 +466,39 @@ def quadro_cards():
 
 @app.route('/contact_us')
 def contact_us():
-    return render_template('AboutUs_contact_us.html.j2', title=_('Contact Us'))
+    return render_template('AboutUs_contact_us.html.j2', title=_('聯絡我們'))
 
 @app.route('/after-sales')
 def after_sales():
-    return render_template('AboutUs_after-sales.html.j2', title=_('After-sales'))
+    return render_template('AboutUs_after-sales.html.j2', title=_('退貨及售後支援'))
 
 @app.route('/purchase_process')
 def purchase_process():
-    return render_template('AboutUs_purchase_process.html.j2', title=_('purchase_process'))
+    return render_template('AboutUs_purchase_process.html.j2', title=_('購買流程'))
 
 @app.route('/payment_method')
 def payment_method():
-    return render_template('AboutUs_payment_method.html.j2', title=_('payment_method'))
+    return render_template('AboutUs_payment_method.html.j2', title=_('付款方式'))
 
 @app.route('/removal_service')
 def removal_service():
-    return render_template('AboutUs_removal_service.html.j2', title=_('removal_service'))
+    return render_template('AboutUs_removal_service.html.j2', title=_('除舊服務條款'))
 
 @app.route('/PC_festival')
 def PC_festival():
-    return render_template('AboutUs_PC_festival.html.j2', title=_('PC_festival'))
+    return render_template('AboutUs_PC_festival.html.j2', title=_('飛馬電腦節2021'))
 
 @app.route('/feedback')
 def feedback():
-    return render_template('AboutUs_feedback.html.j2', title=_('feedback'))
+    return render_template('AboutUs_feedback.html.j2', title=_('意見回饋'))
 
 @app.route('/aboutus')
 def aboutus():
-    return render_template('AboutUs_aboutus.html.j2', title=_('aboutus'))
+    return render_template('AboutUs_aboutus.html.j2', title=_('關於我們'))
 
 @app.route('/home')
 def home():
+<<<<<<< HEAD
     return render_template('home.html.j2', title=_('home'))
 
 @app.route('/storage/ssd')
@@ -492,3 +509,6 @@ def ssd_storage():
 def hdd_storage():
     # 这里是处理逻辑
     return render_template('hdd_storage.html.j2')
+=======
+    return render_template('home.html.j2', title=_('產品目錄'))
+>>>>>>> 2c7b53e4f8cb87ceefcf468590eef2d999f6ab3e

@@ -13,6 +13,10 @@
         {% else %}
             <p>No products associated with this order.</p>
         {% endfor %}
+        <!-- Add a delete button for each order -->
+        <form action="{{ url_for('delete_order', order_id=order.id) }}" method="post">
+            <input type="submit" value="Delete Order">
+        </form>
     {% else %}
         <p>No orders found.</p>
     {% endfor %}

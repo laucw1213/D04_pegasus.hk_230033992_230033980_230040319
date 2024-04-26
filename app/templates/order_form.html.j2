@@ -2,102 +2,996 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 {% block app_content %}
     <div class="row">
-        <!-- Other Content -->
-        <div class="col-lg-8">
-            <h1>{{ title }}</h1>
-            <!-- Product Search -->
-            <form method="GET">
-                <input type="text"
-                       name="query"
-                       placeholder="Search products"
-                       value="{{ request.args.get('query', '') }}">
-                <input type="submit" value="Search">
-            </form>
-            <!-- Category Selector -->
-            <form method="POST" id="categoryForm">
-                {{ form.hidden_tag() }}
-                <div class="form-group">
-                    <label for="category">Category</label>
-                    <select name="category"
-                            id="category"
-                            class="form-control"
-                            onchange="document.getElementById('categoryForm').submit();"
-                            style="max-height: 200px;
-                                   overflow-y: auto">
-                        <option value="">
-                            All
-                        </option>
-                        {% for category in categories %}
-                            <option value="{{ category.id }}">
-                                {{ category.name }}
-                            </option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </form>
-            {% for product in products %}
-                <div>
-                    <h2>Product ID: {{ product.id }}</h2>
-                    <h2>Product Name: {{ product.name }}</h2>
-                    <h2>Product Price: {{ product.price }}</h2>
-                    <!-- 顯示產品價格 -->
-                    <!-- Add to Cart Button -->
-                    <!-- Add to Cart Button -->
-                    <form method="POST" action="{{ url_for('add_to_cart') }}">
-                        <input type="hidden" name="product_id" value="{{ product.id }}">
-                        <input type="submit" value="Add to Cart">
-                    </form>
-                </div>
-            {% endfor %}
-        </div>
-        <!-- Cart Summary -->
-        <div class="col-lg-4">
-            <h3 class="bold">
-                <i class="glyphicon glyphicon-th-list"></i> Cart Summary
-            </h3>
-            <div class="panel panel-primary">
-                <div class="panel-body">Current Cart Value</div>
-                <ul class="list-group">
-                    <li class="list-group-item">
-                        <p>
-                            {{ quantity_total }} Items <strong class="pull-right">&dollar;{{ grand_total }}</strong>
-                        </p>
-                        <p>
-                            24hr Shipping <strong class="pull-right">&dollar;100</strong>
-                        </p>
-                    </li>
-                    {% for item, quantity in cart_items %}
-                        <li class="list-group-item">
-                            <p>Product Name: {{ item.name }}</p>
-                            <p>Quantity: {{ quantity }}</p>
-                            <!-- 添加一個 "Remove" 按鈕 -->
-                            <form action="{{ url_for('remove_from_cart', item_id=item.id) }}" method="post">
-                                <input type="submit" value="Remove">
-                            </form>
-                        </li>
-                    {% endfor %}
-                    <li class="list-group-item">
-                        <p>
-                            Total <strong class="pull-right">&dollar;{{ grand_total_plus_shipping }}</strong>
-                        </p>
-                    </li>
-                </ul>
-                <div class="panel-footer">
-                    {% if quantity_total>0 %}
-                        <a href="{{ url_for('checkout') }}" class="btn btn-primary btn-sm">
-                            Checkout <i class="glyphicon glyphicon-chevron-right"></i>
-                        </a>
-                        <a href="{{ url_for('clear_cart') }}"
-                           class="btn btn-danger btn-sm pull-right">
-                            Clear Cart <i class="glyphicon glyphicon-trash"></i>
-                        </a>
-                    {% else %}
-                        <a href="#" class="btn btn-primary btn-sm">
-                            Checkout <i class="glyphicon glyphicon-chevron-right"></i>
-                        </a>
-                    {% endif %}
+        <head>
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/nodes/0.9e130477.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/scheduler.d85d7b2d.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/index.1c65dedc.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/stores.67a8d524.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/singletons.3e9c0612.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/index.e530fbd6.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/nodes/1.2d89ded8.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/nodes/2.34681daf.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/RegularLayout.744e251b.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/navigation.8fa2f492.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/auth.44c0ac88.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/Header.88d56c58.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/each.5cab842d.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/users.66386a5d.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/catelogPath.5976df15.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/index.esm2017.ee9d743b.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/keywords.21b2d2ac.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/index.fd75c726.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/index.2eddf872.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/functions.6651f790.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/BaseHeader.1700e345.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/notification.c038adc6.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/header.7cde1e1a.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/Notification.7f9ca7da.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/cross.2b41777e.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/Logo.a54fd18b.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/logo.b70b5f20.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/SearchBar.52e3d0b6.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/search-svgrepo-com.d6e91f8e.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/CartCard.92f7b612.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/cart.c24bbfb6.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/coupon.6a0e0beb.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/price.a23ebaba.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/trash.a24aca6e.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/ProductMeta.74021b43.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/Image.5a0e0e02.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/TagLabel.0496b139.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/await_block.d02a4950.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/index.a80fffbf.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/search.ab44b0b2.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/images.82edeb3f.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/tmp.ff3de7fe.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/block.dd46339b.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/product-dummy.de8af7b1.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/NumberInputStepper.8f495610.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/set.1d9593fd.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/footer.00fb0cfb.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/left-arrow.b7971381.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/catalog.f3f7bd1d.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/set.22e89f46.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/builder.f59b4233.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/popups.a9fe3188.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/Lightbox.dd3ab85d.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/nodes/27.e5fb6ec3.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/preload-helper.a4192956.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/events.0e95f1ed.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/slides.48b3d902.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/SlideProductCards.6564d034.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/swiper-element-bundle.5b40226e.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/ProductCard.2afebb6d.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/supplierInvoice.90bce297.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/seo.02028dfc.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/displays.47577db9.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/SlideBanner.a0996f50.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/Events.svelte_svelte_type_style_lang.bd9b6fe7.js">
+            <script src="https://www.googletagmanager.com/gtag/js?l=dataLayer&amp;id=G-JTQTYR8J9P"
+                    async=""></script>
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/nodes/4.fd770e3c.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/menu-arrow.0d78cf41.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/Toggle.4d17727e.js">
+            <link rel="stylesheet"
+                  href="https://shop.pegasus.hk/_app/immutable/assets/Toggle.44ef2649.css">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/builder.3ac65ca8.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/builder.052aeaa7.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/builder.9db13268.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/lz-string.35001fa0.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/qrcode.836c4f76.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/_commonjsHelpers.725317a4.js">
+            <link rel="stylesheet"
+                  href="https://shop.pegasus.hk/_app/immutable/assets/4.b8661df5.css">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/nodes/40.b09dbba4.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/globals.7f7f1b26.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/TwoWaySlider.f73fe107.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/TwoWaySlider.svelte_svelte_type_style_lang.b2379ec5.js">
+            <link rel="stylesheet"
+                  href="https://shop.pegasus.hk/_app/immutable/assets/TwoWaySlider.a6a434ee.css">
+            <link rel="stylesheet"
+                  href="https://shop.pegasus.hk/_app/immutable/assets/nouislider.1d13cd18.css">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/info.1fb6cf80.js">
+            <link rel="stylesheet"
+                  href="https://shop.pegasus.hk/_app/immutable/assets/info.5ac5a352.css">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/time.b2909c3a.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/orders.751064ce.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/LoadingCircle.eac7245e.js">
+            <link rel="stylesheet"
+                  href="https://shop.pegasus.hk/_app/immutable/assets/LoadingCircle.39b67c6f.css">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/IntersectionObserver.53888229.js">
+            <link rel="modulepreload"
+                  as="script"
+                  crossorigin=""
+                  href="https://shop.pegasus.hk/_app/immutable/chunks/SortButton.9ef58945.js">
+            <link rel="stylesheet"
+                  href="https://shop.pegasus.hk/_app/immutable/assets/SortButton.61a9a4a2.css">
+            <link rel="stylesheet"
+                  href="https://shop.pegasus.hk/_app/immutable/assets/40.f10f9ed5.css">
+            <meta name="description"
+                  content="PEGASUS 砌機報價系統讓您能隨時隨地自選砌機電腦零件，價格透明。您可以根據預算和需求選擇電腦零件，打造個性化的電腦系統。立即點擊自選砌機！">
+        </head>
+        <div>
+            <main class="svelte-1gmvasf">
+                <div class="container svelte-10rl02j">
+                    <div class="categories-options svelte-10rl02j">
+                        <!-- left -->
+                        <div class="categories svelte-10rl02j">
+                            <div class="category svelte-10rl02j">
+                                <button class="svelte-10rl02j">
+                                    <svg width="40"
+                                         height="40"
+                                         viewBox="0 0 40 40"
+                                         fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M33.1217 28.768C33.1217 28.096 33.6017 27.52 34.2417 27.36C34.4017 27.328 34.5297 27.168 34.5297 27.008V6.88C34.5297 6.08 33.8897 5.44 33.0897 5.44H13.3457C13.0577 5.44 12.7697 5.568 12.5777 5.76L6.08172 12.256C5.88972 12.448 5.76172 12.736 5.76172 13.024V27.008C5.76172 27.168 5.88972 27.328 6.04972 27.36C6.68972 27.488 7.16972 28.064 7.16972 28.768C7.16972 29.44 6.68972 30.016 6.04972 30.176C5.88972 30.208 5.76172 30.368 5.76172 30.528V32.832C5.76172 33.632 6.40172 34.272 7.20172 34.272H33.1217C33.9217 34.272 34.5617 33.632 34.5617 32.832V30.528C34.5617 30.368 34.4337 30.208 34.2737 30.176C33.6337 30.016 33.1217 29.44 33.1217 28.768ZM28.7057 30.208H23.8097V31.744H16.5137V30.208H11.6177C10.6257 30.208 9.82572 29.408 9.82572 28.416V11.296C9.82572 10.304 10.6257 9.504 11.6177 9.504H28.7377C29.7297 9.504 30.5297 10.304 30.5297 11.296V28.416C30.5297 29.376 29.6977 30.208 28.7057 30.208Z" fill="currentColor">
+                                        </path>
+                                        <path d="M7.20172 5.44C6.40172 5.44 5.76172 6.08 5.76172 6.88V9.152C5.76172 9.472 6.14572 9.632 6.36972 9.408L9.69772 6.08C9.92172 5.856 9.76172 5.472 9.44172 5.472H7.20172V5.44Z" fill="currentColor">
+                                        </path>
+                                        <path d="M20.2259 16.8H19.5859V19.68H20.2259C20.6419 19.68 20.8979 19.488 20.8979 18.88V17.6C20.8659 16.992 20.6419 16.8 20.2259 16.8Z" fill="currentColor">
+                                        </path>
+                                        <path d="M27.7465 11.04H12.5785C11.9065 11.04 11.3945 11.584 11.3945 12.224V27.424C11.3945 28.096 11.9385 28.608 12.5785 28.608H27.7785C28.4505 28.608 28.9625 28.064 28.9625 27.424V12.256C28.9625 11.584 28.4185 11.04 27.7465 11.04ZM17.1545 18.304H15.7465V17.312C15.7465 16.64 15.4585 16.384 14.9785 16.384C14.4985 16.384 14.2105 16.64 14.2105 17.312V22.368C14.2105 23.04 14.4985 23.264 14.9785 23.264C15.4585 23.264 15.7465 23.008 15.7465 22.368V21.024H17.1545V22.272C17.1545 23.776 16.4185 24.64 14.9465 24.64C13.5065 24.64 12.7385 23.776 12.7385 22.272V17.408C12.7385 15.904 13.4745 15.04 14.9465 15.04C16.3865 15.04 17.1545 15.904 17.1545 17.408V18.304ZM22.4345 18.688C22.4345 20.192 21.6985 20.992 20.2265 20.992H19.5225V24.512H18.0505V15.168H20.2265C21.6985 15.168 22.4345 16 22.4345 17.472V18.688ZM27.4905 22.304C27.4905 23.808 26.7545 24.672 25.2825 24.672C23.8105 24.672 23.0745 23.808 23.0745 22.304V15.168H24.5465V22.4C24.5465 23.072 24.8345 23.296 25.3145 23.296C25.7945 23.296 26.0825 23.04 26.0825 22.4V15.168H27.4905V22.304Z" fill="currentColor">
+                                        </path>
+                                    </svg>
+                                    CPU處理器
+                                    <svg width="40"
+                                         height="40"
+                                         viewBox="0 0 40 40"
+                                         fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M19 27.0004V21.0004H13V19.0004H19V13.0004H21V19.0004H27V21.0004H21V27.0004H19Z" fill="#6D2BBB"></path>
+                                        <rect x="0.5" y="0.500427" width="39" height="39" rx="7.5" stroke="#6D2BBB" stroke-dasharray="5 5"></rect>
+                                    </svg>
+                                </button>
+                                <div class="svelte-10rl02j empty"></div>
+                            </div>
+                            <div class="category svelte-10rl02j">
+                                <button class="svelte-10rl02j">
+                                    <svg width="40"
+                                         height="40"
+                                         viewBox="0 0 40 40"
+                                         fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M20.6401 16.128H17.6641V19.136H20.6401V16.128Z" fill="currentColor"></path>
+                                        <path d="M33.2177 7.776H27.4257L25.5697 5.76C25.3777 5.536 25.1217 5.44 24.8337 5.44H15.8417C15.2657 5.44 14.8177 5.888 14.8177 6.464V7.776H12.0337L9.56972 5.664C9.37772 5.504 9.15372 5.44 8.92972 5.44H6.78572C6.20972 5.44 5.76172 5.888 5.76172 6.464V21.568C5.76172 22.144 6.20972 22.592 6.78572 22.592H7.80972V33.568C7.80972 34.304 8.38572 34.88 9.12172 34.88H33.2497C33.9857 34.88 34.5617 34.304 34.5617 33.568V9.088C34.5297 8.352 33.9537 7.776 33.2177 7.776ZM30.7857 13.504C30.7857 13.12 31.0737 12.832 31.4577 12.832C31.8417 12.832 32.1297 13.12 32.1297 13.504V21.76C32.1297 22.144 31.8417 22.432 31.4577 22.432C31.0737 22.432 30.7857 22.144 30.7857 21.76V13.504ZM28.1297 13.504C28.1297 13.12 28.4177 12.832 28.8017 12.832C29.1857 12.832 29.4737 13.12 29.4737 13.504V21.76C29.4737 22.144 29.1857 22.432 28.8017 22.432C28.4177 22.432 28.1297 22.144 28.1297 21.76V13.504ZM30.0177 23.808L32.1297 25.92V30.464H27.6177L25.5057 28.352V23.808H30.0177ZM25.4737 13.504C25.4737 13.12 25.7617 12.832 26.1457 12.832C26.5297 12.832 26.8177 13.12 26.8177 13.504V21.76C26.8177 22.144 26.5297 22.432 26.1457 22.432C25.7617 22.432 25.4737 22.144 25.4737 21.76V13.504ZM15.0097 17.088C14.6257 17.088 14.3377 16.8 14.3377 16.416C14.3377 16.032 14.6257 15.744 15.0097 15.744H16.1937V15.328C16.1937 14.944 16.4817 14.656 16.8657 14.656H17.2817V13.472C17.2817 13.088 17.5697 12.8 17.9537 12.8C18.3377 12.8 18.6257 13.088 18.6257 13.472V14.656H19.6817V13.472C19.6817 13.088 19.9697 12.8 20.3537 12.8C20.7377 12.8 21.0257 13.088 21.0257 13.472V14.656H21.4097C21.7937 14.656 22.0817 14.944 22.0817 15.328V15.744H23.2657C23.6497 15.744 23.9377 16.032 23.9377 16.416C23.9377 16.8 23.6497 17.088 23.2657 17.088H22.0817V18.144H23.2657C23.6497 18.144 23.9377 18.432 23.9377 18.816C23.9377 19.2 23.6497 19.488 23.2657 19.488H22.0817V19.904C22.0817 20.288 21.7937 20.576 21.4097 20.576H20.9937V21.76C20.9937 22.144 20.7057 22.432 20.3217 22.432C19.9377 22.432 19.6497 22.144 19.6497 21.76V20.576H18.5937V21.76C18.5937 22.144 18.3057 22.432 17.9217 22.432C17.5377 22.432 17.2497 22.144 17.2497 21.76V20.576H16.8337C16.4497 20.576 16.1617 20.288 16.1617 19.904V19.488H15.0097C14.6257 19.488 14.3377 19.2 14.3377 18.816C14.3377 18.432 14.6257 18.144 15.0097 18.144H16.1937V17.088H15.0097ZM21.4097 26.496H15.4897C15.1057 26.496 14.8177 26.208 14.8177 25.824C14.8177 25.44 15.1057 25.152 15.4897 25.152H21.4097C21.7937 25.152 22.0817 25.44 22.0817 25.824C22.0817 26.176 21.7937 26.496 21.4097 26.496ZM22.0817 28.48C22.0817 28.864 21.7937 29.152 21.4097 29.152H15.4897C15.1057 29.152 14.8177 28.864 14.8177 28.48C14.8177 28.096 15.1057 27.808 15.4897 27.808H21.4097C21.7937 27.808 22.0817 28.096 22.0817 28.48ZM22.0497 23.168C22.0497 22.688 22.4657 22.272 22.9457 22.272C23.4257 22.272 23.8417 22.688 23.8417 23.168C23.8417 23.648 23.4257 24.064 22.9457 24.064C22.4657 24.064 22.0497 23.648 22.0497 23.168ZM10.2417 33.312C9.76172 33.312 9.34572 32.896 9.34572 32.416C9.34572 31.936 9.76172 31.52 10.2417 31.52C10.7217 31.52 11.1377 31.936 11.1377 32.416C11.1377 32.928 10.7217 33.312 10.2417 33.312ZM12.0977 16.032L8.57772 20.544H7.74572V7.488H7.77772H8.54572L12.0977 10.496V16.032ZM12.2577 23.712V21.408C12.2577 21.216 12.4177 21.088 12.5777 21.088H14.8817C15.0737 21.088 15.2017 21.248 15.2017 21.408V23.712C15.2017 23.904 15.0417 24.032 14.8817 24.032H12.5777C12.4177 24.064 12.2577 23.904 12.2577 23.712ZM22.5617 33.312H12.9297L14.4337 30.464H24.0657L22.5617 33.312ZM22.9137 10.112H16.8657V7.488H24.3857L25.1857 8.352L22.9137 10.112ZM28.9937 33.312H25.4737V31.552H28.9937V33.312ZM32.0657 33.312C31.5857 33.312 31.1697 32.896 31.1697 32.416C31.1697 31.936 31.5857 31.52 32.0657 31.52C32.5457 31.52 32.9617 31.936 32.9617 32.416C32.9617 32.928 32.5777 33.312 32.0657 33.312ZM32.0657 11.136C31.5857 11.136 31.1697 10.72 31.1697 10.24C31.1697 9.76 31.5857 9.344 32.0657 9.344C32.5457 9.344 32.9617 9.76 32.9617 10.24C32.9617 10.72 32.5777 11.136 32.0657 11.136Z" fill="currentColor">
+                                        </path>
+                                    </svg>
+                                    主機板
+                                    <svg width="40"
+                                         height="40"
+                                         viewBox="0 0 40 40"
+                                         fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M19 27.0004V21.0004H13V19.0004H19V13.0004H21V19.0004H27V21.0004H21V27.0004H19Z" fill="#6D2BBB"></path>
+                                        <rect x="0.5" y="0.500427" width="39" height="39" rx="7.5" stroke="#6D2BBB" stroke-dasharray="5 5"></rect>
+                                    </svg>
+                                </button>
+                                <div class="svelte-10rl02j empty"></div>
+                            </div>
+                            <div class="category svelte-10rl02j">
+                                <button class="svelte-10rl02j">
+                                    <svg width="40"
+                                         height="40"
+                                         viewBox="0 0 40 40"
+                                         fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M36.5112 13.248L34.0792 10.816C33.8872 10.624 33.6312 10.528 33.3752 10.528H24.5752C24.2552 10.528 23.9672 10.688 23.7752 10.944H18.5592C18.3672 10.688 18.0792 10.528 17.7592 10.528H6.17522V8C6.17522 7.648 5.88722 7.36 5.53522 7.36C5.18322 7.36 4.89522 7.648 4.89522 8V13.856H3.87122C3.51922 13.856 3.19922 14.144 3.19922 14.528V17.504C3.19922 17.856 3.48722 18.176 3.87122 18.176H4.89522V20.032H3.87122C3.51922 20.032 3.19922 20.32 3.19922 20.704V23.68C3.19922 24.032 3.48722 24.352 3.87122 24.352H4.89522V32.32C4.89522 32.672 5.18322 32.96 5.53522 32.96C5.88722 32.96 6.17522 32.672 6.17522 32.32V27.712H7.51922V28.896C7.51922 29.664 8.15922 30.304 8.92722 30.304H10.7192C11.4872 30.304 12.1272 29.664 12.1272 28.896V27.712H13.5032V28.896C13.5032 29.664 14.1432 30.304 14.9112 30.304H20.1912C20.9592 30.304 21.5992 29.664 21.5992 28.896V27.296H23.6792C23.8712 27.552 24.1592 27.712 24.4792 27.712H33.4072C33.6632 27.712 33.9192 27.616 34.1112 27.424L36.5432 24.992C36.7352 24.8 36.8312 24.544 36.8312 24.288V13.952C36.7992 13.696 36.7032 13.44 36.5112 13.248ZM20.2232 13.088C19.8392 13.088 19.4872 12.864 19.3272 12.512L19.0392 11.872H23.3272L23.0392 12.512C22.8792 12.864 22.5272 13.088 22.1432 13.088H20.2232ZM23.0072 26.016L23.1672 26.336H19.1672L19.3272 26.016C19.4872 25.664 19.8392 25.44 20.2232 25.44H22.1432C22.4952 25.44 22.8472 25.664 23.0072 26.016ZM13.9192 13.472C17.0552 13.472 19.5832 16 19.5832 19.136C19.5832 22.272 17.0552 24.8 13.9192 24.8C10.7832 24.8 8.25522 22.272 8.25522 19.136C8.25522 16 10.8152 13.472 13.9192 13.472ZM10.7832 28.896C10.7832 28.96 10.7192 29.024 10.6552 29.024H8.86322C8.79922 29.024 8.73522 28.96 8.73522 28.896V27.712H10.7512V28.896H10.7832ZM20.2552 28.896C20.2552 28.96 20.1912 29.024 20.1272 29.024H14.8472C14.7832 29.024 14.7192 28.96 14.7192 28.896V27.712H17.8872C18.2072 27.712 18.4952 27.552 18.6872 27.296H20.2552V28.896ZM28.3832 24.768C25.2792 24.768 22.7192 22.24 22.7192 19.104C22.7192 15.968 25.2792 13.472 28.3832 13.472C31.5192 13.472 34.0472 16 34.0472 19.136C34.0472 22.272 31.5192 24.768 28.3832 24.768Z" fill="currentColor">
+                                        </path>
+                                        <path d="M13.5051 20.192C13.6011 20.224 13.6971 20.224 13.7931 20.224V22.848C13.7931 22.912 13.7931 23.008 13.8251 23.072C13.9531 23.392 14.3051 23.552 14.5931 23.424C15.4251 23.072 16.0011 22.272 16.0011 21.344C16.0011 20.544 15.5531 19.776 14.8491 19.392C14.8811 19.296 14.8811 19.2 14.8811 19.104H17.5051C17.5691 19.104 17.6651 19.104 17.7291 19.072C18.0491 18.944 18.2091 18.592 18.0811 18.304C17.8891 17.824 17.5371 17.44 17.0891 17.184C16.0011 16.576 14.6571 16.992 14.0811 18.048C13.9851 18.016 13.8891 18.016 13.7931 18.016V15.392C13.7931 15.328 13.7931 15.232 13.7611 15.168C13.6331 14.848 13.2811 14.688 12.9931 14.816C12.5131 15.008 12.1291 15.36 11.8731 15.808C11.2651 16.896 11.6811 18.24 12.7371 18.816C12.7051 18.912 12.7051 19.008 12.7051 19.104H10.0811C10.0171 19.104 9.92112 19.104 9.85712 19.136C9.53712 19.264 9.37712 19.616 9.50512 19.904C9.69712 20.384 10.0491 20.768 10.4971 21.024C11.5531 21.664 12.8971 21.248 13.5051 20.192Z" fill="currentColor">
+                                        </path>
+                                        <path d="M31.679 17.152C30.591 16.544 29.247 16.96 28.671 18.016C28.575 17.984 28.479 17.984 28.383 17.984V15.36C28.383 15.296 28.383 15.2 28.351 15.136C28.223 14.816 27.871 14.656 27.583 14.784C27.103 14.976 26.719 15.328 26.463 15.776C25.855 16.864 26.271 18.208 27.327 18.784C27.295 18.88 27.295 18.976 27.295 19.072H24.671C24.607 19.072 24.511 19.072 24.447 19.104C24.127 19.232 23.967 19.584 24.095 19.872C24.287 20.352 24.639 20.736 25.087 20.992C26.175 21.6 27.519 21.184 28.095 20.128C28.191 20.16 28.287 20.16 28.383 20.16V22.784C28.383 22.848 28.383 22.944 28.415 23.008C28.543 23.328 28.895 23.488 29.183 23.36C30.015 23.008 30.591 22.208 30.591 21.28C30.591 20.48 30.143 19.712 29.439 19.328C29.471 19.232 29.471 19.136 29.471 19.04H32.095C32.159 19.04 32.255 19.04 32.319 19.008C32.639 18.88 32.799 18.528 32.671 18.24C32.479 17.824 32.127 17.408 31.679 17.152Z" fill="currentColor">
+                                        </path>
+                                    </svg>
+                                    顯示卡
+                                    <svg width="40"
+                                         height="40"
+                                         viewBox="0 0 40 40"
+                                         fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M19 27.0004V21.0004H13V19.0004H19V13.0004H21V19.0004H27V21.0004H21V27.0004H19Z" fill="#6D2BBB"></path>
+                                        <rect x="0.5" y="0.500427" width="39" height="39" rx="7.5" stroke="#6D2BBB" stroke-dasharray="5 5"></rect>
+                                    </svg>
+                                </button>
+                                <div class="svelte-10rl02j empty"></div>
+                            </div>
+                            <div class="category svelte-10rl02j">
+                                <button class="svelte-10rl02j">
+                                    <svg width="40"
+                                         height="40"
+                                         viewBox="0 0 40 40"
+                                         fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M31.1042 14.272V11.488C31.1042 10.784 30.5282 10.24 29.8562 10.24H5.40816C4.70416 10.24 4.16016 10.816 4.16016 11.488V15.2C4.16016 15.552 4.44816 15.84 4.80016 15.84H4.92816C5.63216 15.84 6.20816 16.384 6.24016 17.056C6.27216 17.76 5.69616 18.336 4.99216 18.336H4.80016C4.44816 18.336 4.16016 18.624 4.16016 18.976V22.976C4.16016 23.68 4.73616 24.224 5.40816 24.224H7.58416V16.768C7.58416 15.392 8.70416 14.272 10.0802 14.272H31.1042Z" fill="currentColor">
+                                        </path>
+                                        <path d="M35.394 21.504H35.522C35.874 21.504 36.162 21.216 36.162 20.864V17.152C36.162 16.448 35.586 15.904 34.914 15.904H10.498C9.794 15.904 9.25 16.48 9.25 17.152V20.864C9.25 21.216 9.538 21.504 9.89 21.504H10.018C10.722 21.504 11.298 22.048 11.33 22.72C11.362 23.424 10.786 24 10.082 24H9.89C9.538 24 9.25 24.288 9.25 24.64V28.64C9.25 29.344 9.826 29.888 10.498 29.888H12.514V26.816C12.514 26.464 12.77 26.176 13.122 26.144C13.474 26.112 13.794 26.4 13.794 26.784V29.888H16.002C16.354 29.888 16.642 29.6 16.642 29.248V27.616H18.306V29.248C18.306 29.6 18.594 29.888 18.946 29.888H21.282V26.784C21.282 26.432 21.57 26.144 21.922 26.144C22.274 26.144 22.562 26.432 22.562 26.784V29.888H24.002V26.816C24.002 26.464 24.258 26.176 24.61 26.144C24.962 26.112 25.282 26.4 25.282 26.784V29.888H26.722V26.816C26.722 26.464 26.978 26.176 27.33 26.144C27.682 26.112 28.002 26.4 28.002 26.784V29.888H29.442V26.816C29.442 26.464 29.698 26.176 30.05 26.144C30.402 26.112 30.722 26.4 30.722 26.784V29.888H32.162V26.816C32.162 26.464 32.418 26.176 32.77 26.144C33.122 26.112 33.442 26.4 33.442 26.784V29.888H35.042C35.746 29.888 36.29 29.312 36.29 28.64V24.64C36.29 24.288 36.002 24 35.65 24H35.458C34.754 24 34.178 23.424 34.21 22.72C34.082 22.016 34.69 21.504 35.394 21.504ZM31.458 24.096C31.458 24.544 31.074 24.928 30.626 24.928H14.754C14.274 24.928 13.922 24.544 13.922 24.096V18.72C13.922 18.272 14.306 17.888 14.754 17.888H30.626C31.106 17.888 31.458 18.272 31.458 18.72V24.096Z" fill="currentColor">
+                                        </path>
+                                        <path d="M29.8546 19.52H27.3906V23.264H29.8546V19.52Z" fill="currentColor"></path>
+                                        <path d="M25.8898 19.52H23.4258V23.264H25.8898V19.52Z" fill="currentColor"></path>
+                                        <path d="M21.9523 19.52H19.4883V23.264H21.9523V19.52Z" fill="currentColor"></path>
+                                        <path d="M17.9835 19.52H15.5195V23.264H17.9835V19.52Z" fill="currentColor"></path>
+                                    </svg>
+                                    RAM 記憶體
+                                    <svg width="40"
+                                         height="40"
+                                         viewBox="0 0 40 40"
+                                         fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M19 27.0004V21.0004H13V19.0004H19V13.0004H21V19.0004H27V21.0004H21V27.0004H19Z" fill="#6D2BBB"></path>
+                                        <rect x="0.5" y="0.500427" width="39" height="39" rx="7.5" stroke="#6D2BBB" stroke-dasharray="5 5"></rect>
+                                    </svg>
+                                </button>
+                                <div class="svelte-10rl02j empty"></div>
+                            </div>
+                            <div class="category svelte-10rl02j">
+                                <button class="svelte-10rl02j">
+                                    <svg width="40"
+                                         height="40"
+                                         viewBox="0 0 40 40"
+                                         fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M24.7704 17.088H24.0664V23.328H24.7704C25.2184 23.328 25.4744 23.104 25.4744 22.496V17.92C25.4744 17.312 25.2184 17.088 24.7704 17.088Z" fill="currentColor">
+                                        </path>
+                                        <path d="M27.6818 12.896H12.3858C11.8738 12.896 11.4258 13.312 11.4258 13.856V26.528C11.4258 27.04 11.8418 27.488 12.3858 27.488H27.6818C28.1938 27.488 28.6418 27.072 28.6418 26.528V13.856C28.6418 13.344 28.1938 12.896 27.6818 12.896ZM15.2338 24.672C13.8898 24.672 13.2178 23.872 13.2178 22.464V21.952H14.4978V22.592C14.4978 23.2 14.7858 23.424 15.2018 23.424C15.6498 23.424 15.9058 23.2 15.9058 22.56C15.9058 21.824 15.6178 21.376 14.7218 20.576C13.5698 19.552 13.2178 18.848 13.2178 17.856C13.2178 16.48 13.9218 15.68 15.2658 15.68C16.6098 15.68 17.2498 16.48 17.2498 17.888V18.24H15.9698V17.792C15.9698 17.184 15.7138 16.928 15.2978 16.928C14.8498 16.928 14.6258 17.152 14.6258 17.76C14.6258 18.4 14.9138 18.848 15.8098 19.648C16.9618 20.672 17.3138 21.344 17.3138 22.432C17.2818 23.872 16.5778 24.672 15.2338 24.672ZM19.8738 24.672C18.5298 24.672 17.8578 23.872 17.8578 22.464V21.952H19.1378V22.592C19.1378 23.2 19.4258 23.424 19.8418 23.424C20.2898 23.424 20.5458 23.2 20.5458 22.56C20.5458 21.824 20.2578 21.376 19.3618 20.576C18.2098 19.552 17.8578 18.848 17.8578 17.856C17.8578 16.48 18.5618 15.68 19.9058 15.68C21.2498 15.68 21.8898 16.48 21.8898 17.888V18.24H20.6098V17.792C20.6098 17.184 20.3538 16.928 19.9378 16.928C19.4898 16.928 19.2658 17.152 19.2658 17.76C19.2658 18.4 19.5538 18.848 20.4498 19.648C21.6018 20.672 21.9538 21.344 21.9538 22.432C21.9218 23.872 21.2178 24.672 19.8738 24.672ZM26.8498 22.4C26.8498 23.808 26.1778 24.544 24.8018 24.544H22.7218V15.84H24.8018C26.1778 15.84 26.8498 16.608 26.8498 17.984V22.4Z" fill="currentColor">
+                                        </path>
+                                        <path d="M6.94478 21.344H4.80078V23.456H6.94478V21.344Z" fill="currentColor">
+                                        </path>
+                                        <path d="M6.94478 18.272H4.80078V20.384H6.94478V18.272Z" fill="currentColor">
+                                        </path>
+                                        <path d="M6.94478 24.448H4.80078V26.4H6.94478V24.448Z" fill="currentColor">
+                                        </path>
+                                        <path d="M6.94478 14.016H4.80078V15.968H6.94478V14.016Z" fill="currentColor">
+                                        </path>
+                                        <path d="M8.22669 29.056C7.84269 29.056 7.55469 29.344 7.55469 29.728C7.55469 30.112 7.84269 30.4 8.22669 30.4C8.61069 30.4 8.89869 30.112 8.89869 29.728C8.89869 29.344 8.61069 29.056 8.22669 29.056Z" fill="currentColor">
+                                        </path>
+                                        <path d="M8.22669 11.328C8.61069 11.328 8.89869 11.04 8.89869 10.656C8.89869 10.272 8.61069 9.984 8.22669 9.984C7.84269 9.984 7.55469 10.272 7.55469 10.656C7.55469 11.04 7.84269 11.328 8.22669 11.328Z" fill="currentColor">
+                                        </path>
+                                        <path d="M31.7462 29.056C31.3622 29.056 31.0742 29.344 31.0742 29.728C31.0742 30.112 31.3622 30.4 31.7462 30.4C32.1302 30.4 32.4182 30.112 32.4182 29.728C32.4182 29.344 32.1302 29.056 31.7462 29.056Z" fill="currentColor">
+                                        </path>
+                                        <path d="M31.7462 11.328C32.1302 11.328 32.4182 11.04 32.4182 10.656C32.4182 10.272 32.1302 9.984 31.7462 9.984C31.3622 9.984 31.0742 10.272 31.0742 10.656C31.0742 11.04 31.3622 11.328 31.7462 11.328Z" fill="currentColor">
+                                        </path>
+                                        <path d="M34.2088 8.96H33.2168V10.688C33.2168 11.488 32.5448 12.16 31.7448 12.16C30.9448 12.16 30.2728 11.488 30.2728 10.688V8.96H9.72878V10.688C9.72878 11.488 9.05678 12.16 8.25678 12.16C7.45678 12.16 6.78478 11.488 6.78478 10.688V8.96H5.79278C5.24878 8.96 4.80078 9.408 4.80078 9.952V12.96H7.87278V27.456H4.80078V30.464C4.80078 31.008 5.24878 31.456 5.79278 31.456H6.78478V29.728C6.78478 28.928 7.45678 28.256 8.25678 28.256C9.05678 28.256 9.72878 28.928 9.72878 29.728V31.456H30.3048V29.728C30.3048 28.928 30.9768 28.256 31.7768 28.256C32.5768 28.256 33.2488 28.928 33.2488 29.728V31.456H34.2408C34.7848 31.456 35.2328 31.008 35.2328 30.464V9.92C35.2008 9.376 34.7528 8.96 34.2088 8.96ZM31.7448 16.384C32.1608 16.352 32.4808 16.672 32.4808 17.088C32.4808 17.504 32.1608 17.824 31.7448 17.824H29.7928V19.456H31.7448C32.1608 19.456 32.4808 19.776 32.4808 20.192C32.4808 20.608 32.1608 20.928 31.7448 20.928H29.7928V22.56H31.7448C32.1608 22.56 32.4808 22.88 32.4808 23.296C32.4808 23.712 32.1608 24.032 31.7448 24.032H29.7928V25.664H31.7448C32.1608 25.664 32.4808 25.984 32.4808 26.4C32.4808 26.816 32.1608 27.136 31.7448 27.136H29.7928V27.712C29.7928 28.224 29.3768 28.672 28.8328 28.672H11.2008C10.6888 28.672 10.2408 28.256 10.2408 27.712V12.672C10.2408 12.16 10.6568 11.712 11.2008 11.712H28.8648C29.3768 11.712 29.8248 12.128 29.8248 12.672V13.28H31.7768C32.1928 13.28 32.5128 13.6 32.5128 14.016C32.5128 14.432 32.1928 14.752 31.7768 14.752H29.8248V16.384H31.7448Z" fill="currentColor">
+                                        </path>
+                                    </svg>
+                                    儲存裝置
+                                    <svg width="40"
+                                         height="40"
+                                         viewBox="0 0 40 40"
+                                         fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M19 27.0004V21.0004H13V19.0004H19V13.0004H21V19.0004H27V21.0004H21V27.0004H19Z" fill="#6D2BBB">
+                                        </path>
+                                        <rect x="0.5" y="0.500427" width="39" height="39" rx="7.5" stroke="#6D2BBB" stroke-dasharray="5 5"></rect>
+                                    </svg>
+                                </button>
+                                <div class="svelte-10rl02j empty">
+                                </div>
+                            </div>
+                            <div class="category svelte-10rl02j">
+                                <button class="svelte-10rl02j">
+                                    <!--?xml version="1.0" encoding="utf-8"?-->
+                                    <!-- Generator: Adobe Illustrator 27.8.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+                                    <svg version="1.1"
+                                         id="Layer_1"
+                                         xmlns="http://www.w3.org/2000/svg"
+                                         xmlns:xlink="http://www.w3.org/1999/xlink"
+                                         x="0px"
+                                         y="0px"
+                                         viewBox="0 0 40 40"
+                                         style="enable-background:new 0 0 40 40"
+                                         xml:space="preserve">
+                                        <g>
+                                        <path fill="currentColor" d="M34,8.1H5.9c-0.8,0-1.5,0.6-1.5,1.4v21.1c0,0.8,0.7,1.4,1.5,1.4h28.2c0.8,0,1.5-0.6,1.5-1.4V9.4C35.5,8.7,34.9,8.1,34,8.1z
+                                        M27.3,16.5l1.9-4.9c0-0.1,0.1-0.2,0.3-0.2H32c0.1,0,0.2,0,0.2,0.1c0.1,0.1,0.1,0.2,0,0.3l-1.1,2.5h2.2c0.1,0,0.2,0.1,0.2,0.1
+                                        c0,0.1,0,0.2,0,0.3l-4,6.2c-0.1,0.1-0.1,0.1-0.2,0.1c0,0-0.1,0-0.1,0c-0.1-0.1-0.2-0.2-0.2-0.3l1-3.9h-2.6c-0.1,0-0.2,0-0.2-0.1
+                                        C27.2,16.7,27.2,16.6,27.3,16.5z M15.8,11c2.3,0,4.4,0.8,6,2.3L19.9,15c-1.1-1-2.6-1.5-4.2-1.5c-1.6,0-3.1,0.6-4.2,1.6l-1.8-1.8
+                                        C11.3,11.9,13.4,11,15.8,11z M14.9,20.1l-1,1c-0.2-0.3-0.3-0.7-0.3-1.1c0-0.4,0.1-0.7,0.3-1L14.9,20.1z M14.6,18.2
+                                        c0.3-0.2,0.7-0.4,1.2-0.4c0.4,0,0.8,0.1,1.1,0.3l-1.2,1.2L14.6,18.2z M15.7,20.8l1.1,1.1c-0.3,0.2-0.6,0.3-1,0.3
+                                        c-0.4,0-0.8-0.1-1.1-0.3L15.7,20.8z M16.5,20.1l1.2-1.2c0.2,0.3,0.3,0.7,0.3,1.1c0,0.4-0.1,0.8-0.4,1.2L16.5,20.1z M17.7,17.4
+                                        c-0.5-0.4-1.2-0.6-1.9-0.6c-0.7,0-1.4,0.3-2,0.7l-1.5-1.5c1-0.8,2.2-1.3,3.5-1.3c1.3,0,2.5,0.5,3.4,1.2L17.7,17.4z M13.1,18.2
+                                        c-0.3,0.5-0.5,1.1-0.5,1.8c0,0.7,0.2,1.4,0.6,1.9l-1.5,1.5c-0.7-0.9-1.2-2.1-1.2-3.4c0-1.2,0.4-2.4,1.1-3.3L13.1,18.2z M13.9,22.6
+                                        c0.5,0.4,1.2,0.6,1.9,0.6c0.7,0,1.3-0.2,1.8-0.5l1.5,1.5c-0.9,0.7-2.1,1.1-3.3,1.1c-1.3,0-2.5-0.5-3.4-1.2L13.9,22.6z M18.4,22
+                                        c0.4-0.5,0.7-1.2,0.7-2c0-0.7-0.2-1.4-0.6-1.9l1.5-1.5c0.7,0.9,1.2,2.1,1.2,3.4c0,1.3-0.5,2.5-1.3,3.5L18.4,22z M7.3,10.7
+                                        c0.5,0,0.8,0.4,0.8,0.8c0,0.5-0.4,0.8-0.8,0.8c-0.5,0-0.8-0.4-0.8-0.8C6.5,11.1,6.9,10.7,7.3,10.7z M7.3,29.3
+                                        c-0.5,0-0.8-0.4-0.8-0.8c0-0.5,0.4-0.8,0.8-0.8c0.5,0,0.8,0.4,0.8,0.8C8.2,28.9,7.8,29.3,7.3,29.3z M6.8,20c0-2.3,0.8-4.3,2.2-5.9
+                                        l1.8,1.8C9.9,17,9.3,18.5,9.3,20c0,1.6,0.6,3,1.5,4.2L9,26C7.6,24.4,6.8,22.3,6.8,20z M15.8,29c-2.3,0-4.4-0.8-6-2.3l1.8-1.8
+                                        c1.1,1,2.6,1.5,4.2,1.5c1.5,0,3-0.5,4.1-1.5l1.8,1.8C20.1,28.2,18,29,15.8,29z M20.6,24.2c1-1.1,1.6-2.6,1.6-4.2
+                                        c0-1.6-0.6-3-1.5-4.2l1.8-1.8c1.4,1.6,2.3,3.7,2.3,6c0,2.3-0.9,4.5-2.3,6.1L20.6,24.2z M24.2,29.3c-0.5,0-0.8-0.4-0.8-0.8
+                                        c0-0.5,0.4-0.8,0.8-0.8c0.5,0,0.8,0.4,0.8,0.8C25.1,28.9,24.7,29.3,24.2,29.3z M24.2,12.4c-0.5,0-0.8-0.4-0.8-0.8
+                                        c0-0.5,0.4-0.8,0.8-0.8c0.5,0,0.8,0.4,0.8,0.8C25.1,12,24.7,12.4,24.2,12.4z M33.9,27.9c0,0.4-0.3,0.7-0.7,0.7h-5.6
+                                        c-0.4,0-0.7-0.3-0.7-0.7v-2.9c0-0.2,0.1-0.3,0.2-0.5l0.6-0.6c0.1-0.1,0.3-0.2,0.5-0.2h4.4c0.2,0,0.3,0.1,0.5,0.2l0.6,0.6
+                                        c0.1,0.1,0.2,0.3,0.2,0.5V27.9z">
+                                        </path>
+                                        </g>
+                                    </svg>
+                                    電源
+                                    <svg width="40"
+                                         height="40"
+                                         viewBox="0 0 40 40"
+                                         fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M19 27.0004V21.0004H13V19.0004H19V13.0004H21V19.0004H27V21.0004H21V27.0004H19Z" fill="#6D2BBB">
+                                        </path>
+                                        <rect x="0.5" y="0.500427" width="39" height="39" rx="7.5" stroke="#6D2BBB" stroke-dasharray="5 5"></rect>
+                                    </svg>
+                                </button>
+                                <div class="svelte-10rl02j empty">
+                                </div>
+                            </div>
+                            <div class="category svelte-10rl02j">
+                                <button class="svelte-10rl02j">
+                                    <!--?xml version="1.0" encoding="utf-8"?-->
+                                    <!-- Generator: Adobe Illustrator 27.8.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+                                    <svg version="1.1"
+                                         id="Layer_1"
+                                         xmlns="http://www.w3.org/2000/svg"
+                                         xmlns:xlink="http://www.w3.org/1999/xlink"
+                                         x="0px"
+                                         y="0px"
+                                         viewBox="0 0 40 40"
+                                         style="enable-background:new 0 0 40 40"
+                                         xml:space="preserve">
+                                        <g>
+                                        <path fill="currentColor" d="M32.8,7.9c-0.2-0.4-0.6-0.7-1.1-0.9c-0.1,0-0.2,0-0.3-0.1H8.5C8.4,7,8.2,7,8.1,7.1C7.6,7.3,7.3,7.6,7.1,8
+                                        C7,8.2,7,8.4,7,8.5v22.9C7,31.6,7,31.8,7.1,31.9c0.2,0.5,0.6,0.8,1.1,1c0.1,0,0.2,0,0.3,0.1c0.1,0,0.2,0,0.4,0c7.4,0,14.8,0,22.2,0
+                                        c0.1,0,0.2,0,0.3,0c0.2-0.1,0.4-0.1,0.6-0.2c0.5-0.3,0.8-0.7,0.9-1.2c0,0,0-0.1,0-0.1V8.6C33,8.3,32.9,8.1,32.8,7.9L32.8,7.9z
+                                        M31.9,21.7c-0.1,0.6-0.2,1.2-0.4,1.8c-0.2,0.8-0.5,1.5-0.9,2.2c-0.3,0.6-0.7,1.2-1.1,1.7c-0.4,0.5-0.8,0.9-1.3,1.4
+                                        c-0.6,0.6-1.3,1.1-2.1,1.5c-0.7,0.4-1.5,0.8-2.3,1c-0.5,0.2-1,0.3-1.6,0.4c-0.4,0.1-0.7,0.1-1.1,0.2c-0.3,0-0.6,0-0.9,0
+                                        c-0.2,0-0.3,0-0.5,0c-0.1,0-0.2,0-0.4,0c-0.3,0-0.7-0.1-1-0.1c-0.4-0.1-0.9-0.1-1.3-0.2c-0.6-0.1-1.2-0.3-1.7-0.6
+                                        c-0.5-0.2-0.9-0.4-1.4-0.7c-0.5-0.3-1-0.6-1.5-1c-0.4-0.3-0.7-0.6-1.1-1c-0.7-0.7-1.3-1.5-1.8-2.4c-0.4-0.7-0.7-1.5-1-2.2
+                                        c-0.2-0.5-0.3-1.1-0.4-1.7c-0.1-0.4-0.1-0.7-0.1-1.1c0-0.2,0-0.4,0-0.6c0,0,0-0.1,0-0.1v-0.5c-0.1-0.1,0-0.2,0-0.3
+                                        c0-0.3,0-0.6,0.1-0.9c0.1-0.6,0.2-1.2,0.3-1.8c0.2-0.8,0.6-1.7,1-2.4c0.3-0.6,0.7-1.2,1.2-1.8c0.3-0.4,0.7-0.8,1.1-1.2
+                                        c0.7-0.6,1.4-1.2,2.2-1.7c0.8-0.5,1.7-0.9,2.7-1.2c0.5-0.2,1.1-0.3,1.6-0.4c0.4-0.1,0.8-0.1,1.1-0.1c0.1,0,0.2,0,0.4,0h0.8
+                                        c0.4,0,0.8,0.1,1.3,0.1c0.6,0.1,1.1,0.2,1.6,0.3c0.6,0.2,1.1,0.4,1.7,0.6c0.6,0.3,1.3,0.6,1.8,1c0.6,0.4,1.1,0.9,1.6,1.4
+                                        c0.7,0.6,1.2,1.3,1.7,2.1c0.4,0.7,0.8,1.5,1.1,2.3c0.2,0.6,0.4,1.3,0.5,1.9c0.1,0.3,0.1,0.6,0.1,0.9c0,0.3,0,0.6,0.1,0.9v0.7
+                                        C31.9,20.8,31.9,21.2,31.9,21.7L31.9,21.7z">
+                                        </path>
+                                        <path fill="currentColor" d="M29.8,21.7c-0.1-0.1-0.2-0.1-0.3,0c-0.3,0.1-0.6,0.2-0.9,0.3c-0.4,0.1-0.9,0.2-1.4,0.2c-0.1,0-0.3,0-0.4,0
+                                        c-0.2,0-0.5,0-0.7-0.1c-0.2,0-0.5-0.1-0.7-0.1c-0.3-0.1-0.6-0.2-0.9-0.3c0,0-0.1,0,0-0.1c0-0.1,0.1-0.2,0.1-0.3
+                                        c0.1-0.4,0.2-0.8,0.2-1.3c0-0.1,0-0.1,0.1-0.1c0.2,0,0.4,0,0.6,0c0.4,0,0.8-0.1,1.1-0.2c0.5-0.1,0.9-0.3,1.4-0.5
+                                        c0.5-0.2,1-0.5,1.5-0.9c0.3-0.2,0.5-0.5,0.4-0.8c-0.1-0.3-0.2-0.7-0.3-1c-0.3-0.7-0.6-1.5-1.1-2.1c-0.2-0.3-0.4-0.6-0.7-0.9
+                                        c-0.1-0.1-0.4-0.1-0.4,0.1c-0.1,0.2-0.1,0.3-0.2,0.5c-0.3,0.8-0.8,1.6-1.4,2.2c-0.2,0.2-0.4,0.3-0.5,0.5c-0.3,0.3-0.7,0.5-1.1,0.8
+                                        c-0.1,0-0.1,0-0.1,0c-0.1-0.1-0.2-0.3-0.3-0.4c-0.2-0.3-0.5-0.5-0.7-0.8c0,0,0,0,0-0.1c0.1-0.1,0.1-0.2,0.2-0.3
+                                        c0.4-0.5,0.7-1.1,0.9-1.8c0.2-0.5,0.3-1.1,0.4-1.6c0.1-0.4,0.1-0.8,0.1-1.1c0-0.3-0.2-0.6-0.5-0.7c-0.5-0.2-1-0.4-1.6-0.5
+                                        c-0.6-0.2-1.2-0.2-1.8-0.3c-0.3,0-0.7,0-1,0c-0.2,0-0.3,0.2-0.2,0.3c0,0,0.1,0.1,0.1,0.1c0.3,0.5,0.6,1,0.8,1.6
+                                        c0.2,0.6,0.3,1.3,0.3,2c0,0.2,0,0.3,0,0.5c0,0.3,0,0.5,0,0.8c0,0.1,0,0.1-0.1,0.1c-0.2,0-0.4,0-0.6,0c-0.3,0-0.6,0-1,0.1
+                                        c-0.1,0-0.1,0-0.1-0.1c-0.1-0.5-0.3-1-0.5-1.5c-0.4-0.8-0.9-1.5-1.5-2.1c-0.2-0.2-0.4-0.4-0.6-0.5c-0.3-0.3-0.6-0.4-1-0.2
+                                        c-0.4,0.2-0.7,0.4-1,0.6c-0.6,0.4-1.2,0.9-1.7,1.4c-0.2,0.2-0.4,0.5-0.7,0.8c-0.1,0.2-0.1,0.3,0.1,0.4c0.1,0,0.2,0,0.3,0
+                                        c0.3,0,0.6,0.1,0.9,0.1c0.6,0.1,1.2,0.3,1.7,0.6c0.6,0.4,1.2,0.8,1.7,1.3c0,0,0,0.1,0,0.1c-0.3,0.3-0.6,0.7-0.9,1.1
+                                        c-0.1,0.2-0.1,0.2-0.3,0.1c0,0-0.1,0-0.1,0c-0.4-0.2-0.9-0.3-1.4-0.4c-0.4-0.1-0.8-0.1-1.2-0.1c-0.2,0-0.5,0-0.7,0
+                                        c-0.1,0-0.2,0-0.3,0c-0.4,0-0.7,0.1-1.1,0.1c-0.2,0-0.4,0.2-0.5,0.4c-0.1,0.1-0.1,0.3-0.1,0.4c0,0.3-0.1,0.5-0.1,0.8
+                                        c0,0.2,0,0.4,0,0.7c0,0.2,0,0.4,0,0.6c0,0.2,0,0.4,0,0.6c0,0.2,0,0.4,0.1,0.6c0.1,0.3,0.1,0.6,0.2,0.9c0.1,0.2,0.3,0.3,0.4,0.1
+                                        c0.3-0.3,0.6-0.6,1-0.9c0.6-0.4,1.2-0.7,1.9-1c0.5-0.2,1-0.3,1.4-0.3c0.2,0,0.2,0,0.2,0.2c0,0,0,0.1,0,0.1c0,0.4,0.2,0.8,0.3,1.1
+                                        c0,0.1,0.1,0.2,0.1,0.3c0,0.1-0.2,0.1-0.2,0.1c-0.6,0.3-1.1,0.7-1.5,1.2c-0.3,0.2-0.5,0.5-0.7,0.8c-0.4,0.5-0.7,0.9-1,1.5
+                                        c-0.1,0.2-0.1,0.3,0,0.5c0.1,0.3,0.3,0.4,0.5,0.6c0.4,0.5,0.9,0.9,1.4,1.3c0.6,0.4,1.2,0.8,1.8,1.1c0.1,0.1,0.3,0,0.3-0.2
+                                        c0.1-0.2,0-0.3,0-0.4c0-0.3,0-0.5-0.1-0.8c0-0.1,0-0.2,0-0.4c0-0.2,0-0.5,0.1-0.7c0.1-0.4,0.2-0.8,0.3-1.1c0.2-0.5,0.4-1,0.7-1.4
+                                        c0-0.1,0.1-0.1,0.1,0c0.4,0.3,0.9,0.5,1.4,0.6c0,0,0.1,0,0.1,0.1c0,0.1,0,0.2,0,0.3c0,0.2-0.1,0.5-0.1,0.7c0,0.2,0,0.4,0,0.5
+                                        c0,0.1,0,0.3,0,0.4c0,0.2,0,0.4,0.1,0.5c0.1,0.3,0.1,0.6,0.2,1c0.1,0.5,0.3,0.9,0.5,1.4c0.1,0.3,0.3,0.4,0.7,0.4c0.2,0,0.5,0,0.7,0
+                                        c0.3,0,0.6-0.1,0.9-0.1c0.5-0.1,0.9-0.2,1.4-0.4c0.5-0.2,0.9-0.3,1.3-0.6c0.1,0,0.1-0.1,0.1-0.1c0-0.2,0-0.3-0.2-0.3
+                                        c-0.7-0.4-1.4-0.9-1.9-1.6c-0.5-0.6-0.9-1.4-1.2-2.1c0-0.1,0-0.1,0.1-0.2c0.4-0.2,0.8-0.4,1.2-0.7c0.1,0,0.1-0.1,0.2-0.1
+                                        c0.1,0,0.1,0.1,0.1,0.1c0.3,0.3,0.6,0.6,0.9,0.9c0.4,0.3,0.8,0.6,1.2,0.8c0.6,0.3,1.2,0.6,1.8,0.8c0.2,0.1,0.4,0.1,0.6,0
+                                        c0.2-0.1,0.3-0.2,0.5-0.4c0.5-0.7,0.9-1.4,1.2-2.2c0.2-0.6,0.4-1.1,0.5-1.7C29.9,21.9,29.9,21.8,29.8,21.7z">
+                                        </path>
+                                        </g>
+                                    </svg>
+                                    電腦散熱
+                                    <svg width="40"
+                                         height="40"
+                                         viewBox="0 0 40 40"
+                                         fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M19 27.0004V21.0004H13V19.0004H19V13.0004H21V19.0004H27V21.0004H21V27.0004H19Z" fill="#6D2BBB">
+                                        </path>
+                                        <rect x="0.5" y="0.500427" width="39" height="39" rx="7.5" stroke="#6D2BBB" stroke-dasharray="5 5"></rect>
+                                    </svg>
+                                </button>
+                                <div class="svelte-10rl02j empty">
+                                </div>
+                            </div>
+                            <div class="category svelte-10rl02j">
+                                <button class="svelte-10rl02j">
+                                    <svg width="40"
+                                         height="40"
+                                         viewBox="0 0 40 40"
+                                         fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M19.5214 20.448H11.3294C10.7534 20.448 10.2734 20.928 10.2734 21.504C10.2734 22.08 10.7534 22.56 11.3294 22.56H19.5214C20.0974 22.56 20.5774 22.08 20.5774 21.504C20.5774 20.896 20.0974 20.448 19.5214 20.448Z" fill="currentColor">
+                                        </path>
+                                        <path d="M19.9054 12.032H18.9774C18.9134 11.52 18.4654 11.136 17.9214 11.136H12.9614C12.3534 11.136 11.8734 11.616 11.8734 12.224V12.032H10.9454C10.5614 12.032 10.2734 12.32 10.2734 12.704V16.672C10.2734 17.056 10.5614 17.344 10.9454 17.344H11.8734V17.184C11.8734 17.792 12.3534 18.272 12.9614 18.272H17.8894C18.4334 18.272 18.9134 17.856 18.9774 17.344H19.9054C20.2574 17.344 20.5774 17.056 20.5774 16.672V12.704C20.5774 12.32 20.2894 12.032 19.9054 12.032ZM17.9854 17.184C17.9854 17.216 17.9534 17.248 17.9214 17.248H12.9614C12.9294 17.248 12.8974 17.216 12.8974 17.184V12.224C12.8974 12.192 12.9294 12.16 12.9614 12.16H17.9214C17.9534 12.16 17.9854 12.192 17.9854 12.224V17.184Z" fill="currentColor">
+                                        </path>
+                                        <path d="M19.5214 23.968H11.3294C10.7534 23.968 10.2734 24.448 10.2734 25.024C10.2734 25.6 10.7534 26.08 11.3294 26.08H19.5214C20.0974 26.08 20.5774 25.6 20.5774 25.024C20.5774 24.448 20.0974 23.968 19.5214 23.968Z" fill="currentColor">
+                                        </path>
+                                        <path d="M25.0249 12.928C25.5049 12.928 25.9209 12.512 25.9209 12.032C25.9209 11.52 25.5049 11.136 25.0249 11.136C24.5449 11.136 24.1289 11.552 24.1289 12.032C24.1289 12.512 24.5449 12.928 25.0249 12.928Z" fill="currentColor">
+                                        </path>
+                                        <path d="M25.0249 16.096C25.5049 16.096 25.9209 15.68 25.9209 15.2C25.9209 14.72 25.5049 14.304 25.0249 14.304C24.5449 14.304 24.1289 14.72 24.1289 15.2C24.1289 15.68 24.5449 16.096 25.0249 16.096Z" fill="currentColor">
+                                        </path>
+                                        <path d="M22.2085 22.4C22.6885 22.4 23.1045 21.984 23.1045 21.504C23.1045 21.024 22.6885 20.608 22.2085 20.608C21.6965 20.608 21.3125 20.992 21.3125 21.504C21.3125 21.984 21.7285 22.4 22.2085 22.4Z" fill="currentColor">
+                                        </path>
+                                        <path d="M22.2085 24.128C21.7285 24.128 21.3125 24.544 21.3125 25.024C21.3125 25.504 21.7285 25.92 22.2085 25.92C22.6885 25.92 23.1045 25.504 23.1045 25.024C23.1045 24.544 22.6885 24.128 22.2085 24.128Z" fill="currentColor">
+                                        </path>
+                                        <path d="M32.8651 5.75999H5.12109V8.44799L7.90509 9.69599V31.168V32.224V33.536C7.90509 34.208 8.44909 34.72 9.08909 34.72H10.8811C11.2971 34.72 11.6811 34.496 11.9051 34.144L13.4411 32.224H29.8251H29.9531L31.4891 34.144C31.7131 34.496 32.0971 34.72 32.5131 34.72H34.3051C34.9771 34.72 35.4891 34.176 35.4891 33.536V32.256V31.2V8.38399C35.5211 6.94399 34.3371 5.75999 32.8651 5.75999ZM24.0011 27.616H23.9691H9.28109V9.53599H21.4731V17.056L24.0011 19.456V27.616ZM29.6651 10.368H27.6811C27.3931 10.368 27.1691 10.592 27.1691 10.88V17.472C27.1691 17.76 27.3931 17.984 27.6811 17.984H29.6651V18.848H27.6811C27.3931 18.848 27.1691 19.072 27.1691 19.36V25.952C27.1691 26.24 27.3931 26.464 27.6811 26.464H29.6651V27.52H26.0811V19.008L23.5531 16.608V9.53599H29.6651V10.368ZM29.3131 11.424V16.992H28.1931V11.424H29.3131ZM29.3131 19.968V25.536H28.1931V19.968H29.3131Z" fill="currentColor">
+                                        </path>
+                                    </svg>
+                                    機箱及線材
+                                    <svg width="40"
+                                         height="40"
+                                         viewBox="0 0 40 40"
+                                         fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M19 27.0004V21.0004H13V19.0004H19V13.0004H21V19.0004H27V21.0004H21V27.0004H19Z" fill="#6D2BBB">
+                                        </path>
+                                        <rect x="0.5" y="0.500427" width="39" height="39" rx="7.5" stroke="#6D2BBB" stroke-dasharray="5 5"></rect>
+                                    </svg>
+                                </button>
+                                <div class="svelte-10rl02j empty">
+                                </div>
+                            </div>
+                            <div class="category svelte-10rl02j">
+                                <button class="svelte-10rl02j">
+                                    <svg width="40"
+                                         height="40"
+                                         viewBox="0 0 40 40"
+                                         fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M33.7608 7.392H6.24078C5.44078 7.392 4.80078 8.032 4.80078 8.832V31.136C4.80078 31.936 5.44078 32.576 6.24078 32.576H33.7928C34.5928 32.576 35.2328 31.936 35.2328 31.136V8.8C35.2008 8.032 34.5608 7.392 33.7608 7.392ZM32.2568 8.768C32.7688 8.768 33.1528 9.184 33.1528 9.664C33.1528 10.176 32.7368 10.56 32.2568 10.56C31.7448 10.56 31.3608 10.144 31.3608 9.664C31.3288 9.184 31.7448 8.768 32.2568 8.768ZM29.2488 8.768C29.7608 8.768 30.1448 9.184 30.1448 9.664C30.1448 10.176 29.7288 10.56 29.2488 10.56C28.7368 10.56 28.3528 10.144 28.3528 9.664C28.3208 9.184 28.7368 8.768 29.2488 8.768ZM26.2408 8.768C26.7528 8.768 27.1368 9.184 27.1368 9.664C27.1368 10.176 26.7208 10.56 26.2408 10.56C25.7288 10.56 25.3448 10.144 25.3448 9.664C25.3448 9.184 25.7288 8.768 26.2408 8.768ZM33.6008 29.984C33.6008 30.496 33.1848 30.944 32.6408 30.944H7.36078C6.81678 30.944 6.40078 30.528 6.40078 29.984V12.896C6.40078 12.352 6.81678 11.936 7.36078 11.936H32.6408C33.1848 11.936 33.6008 12.352 33.6008 12.896V29.984Z" fill="currentColor">
+                                        </path>
+                                        <path d="M20.0014 24C21.4153 24 22.5614 22.8539 22.5614 21.44C22.5614 20.0262 21.4153 18.88 20.0014 18.88C18.5876 18.88 17.4414 20.0262 17.4414 21.44C17.4414 22.8539 18.5876 24 20.0014 24Z" fill="currentColor">
+                                        </path>
+                                        <path d="M31.36 13.536H8.64C8.288 13.536 8 13.824 8 14.176V28.704C8 29.056 8.288 29.344 8.64 29.344H31.36C31.712 29.344 32 29.056 32 28.704V14.176C32 13.824 31.712 13.536 31.36 13.536ZM26.24 22.112C26.24 22.272 26.112 22.432 25.952 22.464L24.512 22.816C24.416 23.072 24.32 23.328 24.192 23.584L24.864 24.672C24.928 24.832 24.928 24.992 24.8 25.12L23.776 26.144C23.648 26.272 23.456 26.304 23.328 26.208C23.328 26.208 22.592 25.792 22.24 25.568C21.984 25.728 21.728 25.824 21.44 25.92L21.088 27.36C21.056 27.52 20.896 27.648 20.736 27.648H19.264C19.104 27.648 18.944 27.52 18.912 27.36L18.56 25.92C18.272 25.856 18.016 25.728 17.76 25.6C17.408 25.824 16.704 26.24 16.704 26.24C16.544 26.304 16.384 26.304 16.256 26.176L15.232 25.152C15.104 25.024 15.072 24.832 15.168 24.704L15.808 23.648C15.648 23.392 15.552 23.136 15.456 22.848L14.016 22.496C13.856 22.464 13.728 22.304 13.728 22.144V20.672C13.728 20.512 13.856 20.352 14.016 20.32L15.456 19.968C15.52 19.712 15.616 19.488 15.744 19.264L15.04 18.08C14.976 17.92 14.976 17.76 15.104 17.632L16.128 16.608C16.256 16.48 16.416 16.448 16.576 16.544L17.728 17.248C17.984 17.12 18.272 16.992 18.56 16.896C18.656 16.448 18.912 15.456 18.912 15.456C18.944 15.296 19.104 15.168 19.264 15.168H20.736C20.896 15.168 21.056 15.296 21.088 15.456L21.44 16.896C21.696 16.96 21.952 17.088 22.208 17.216L23.328 16.544C23.488 16.48 23.648 16.48 23.776 16.608L24.8 17.632C24.928 17.76 24.96 17.952 24.864 18.08C24.864 18.08 24.416 18.848 24.192 19.2C24.32 19.456 24.416 19.744 24.512 20L25.952 20.352C26.112 20.384 26.24 20.544 26.24 20.64V22.112Z" fill="currentColor">
+                                        </path>
+                                    </svg>
+                                    作業系統
+                                    <svg width="40"
+                                         height="40"
+                                         viewBox="0 0 40 40"
+                                         fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M19 27.0004V21.0004H13V19.0004H19V13.0004H21V19.0004H27V21.0004H21V27.0004H19Z" fill="#6D2BBB">
+                                        </path>
+                                        <rect x="0.5" y="0.500427" width="39" height="39" rx="7.5" stroke="#6D2BBB" stroke-dasharray="5 5"></rect>
+                                    </svg>
+                                </button>
+                                <div class="svelte-10rl02j empty">
+                                </div>
+                            </div>
+                            <div class="category svelte-10rl02j">
+                                <button class="svelte-10rl02j">
+                                    <svg width="40"
+                                         height="40"
+                                         viewBox="0 0 40 40"
+                                         fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M33.2158 5.85599H26.5278C25.8558 5.85599 25.3438 6.39999 25.3438 7.03999V19.328C25.3438 20 25.8878 20.512 26.5278 20.512H33.2158C33.8878 20.512 34.3998 19.968 34.3998 19.328V7.07199C34.3998 6.39999 33.8558 5.85599 33.2158 5.85599ZM29.8558 7.51999C30.8798 7.51999 31.7118 8.35199 31.7118 9.37599C31.7118 10.4 30.8798 11.2 29.8558 11.2C28.8318 11.2 27.9998 10.368 27.9998 9.34399C27.9998 8.31999 28.8318 7.51999 29.8558 7.51999ZM29.8558 18.752C28.1278 18.752 26.7198 17.344 26.7198 15.616C26.7198 13.888 28.1278 12.48 29.8558 12.48C31.5838 12.48 32.9918 13.888 32.9918 15.616C32.9918 17.344 31.5838 18.752 29.8558 18.752Z" fill="currentColor">
+                                        </path>
+                                        <path d="M29.8557 14.272C29.1197 14.272 28.5117 14.88 28.5117 15.616C28.5117 16.352 29.1197 16.96 29.8557 16.96C30.5917 16.96 31.1997 16.352 31.1997 15.616C31.1997 14.88 30.5917 14.272 29.8557 14.272Z" fill="currentColor">
+                                        </path>
+                                        <path d="M21.2472 22.56C18.0792 22.56 11.1992 22.56 8.03116 22.56C7.35916 22.56 6.75116 22.816 6.27116 23.296C5.79116 23.744 5.53516 24.384 5.53516 25.056V31.68C5.53516 32.352 5.79116 32.96 6.27116 33.44C6.71916 33.92 7.35916 34.176 8.03116 34.176H21.2472C21.9192 34.176 22.5272 33.92 23.0072 33.44C23.4872 32.96 23.7432 32.32 23.7432 31.68V25.056C23.7432 24.384 23.4872 23.776 23.0072 23.296C22.5592 22.816 21.9192 22.56 21.2472 22.56ZM9.72716 31.264C9.02316 31.264 8.47916 30.72 8.47916 30.016C8.47916 29.344 9.05516 28.768 9.72716 28.768C10.3992 28.768 10.9752 29.312 10.9752 30.016C10.9752 30.688 10.4312 31.264 9.72716 31.264ZM9.72716 27.968C9.02316 27.968 8.47916 27.424 8.47916 26.72C8.47916 26.048 9.05516 25.472 9.72716 25.472C10.3992 25.472 10.9752 26.016 10.9752 26.72C10.9752 27.392 10.4312 27.968 9.72716 27.968ZM11.7752 26.72C11.7752 26.048 12.3512 25.472 13.0232 25.472C13.6952 25.472 14.2712 26.016 14.2712 26.72C14.2712 27.392 13.7272 27.968 13.0232 27.968C12.3512 27.968 11.7752 27.424 11.7752 26.72ZM16.3192 30.848H13.0232C12.5752 30.848 12.1912 30.464 12.1912 30.016C12.1912 29.568 12.5752 29.184 13.0232 29.184H16.3192C16.7672 29.184 17.1512 29.568 17.1512 30.016C17.1512 30.464 16.7672 30.848 16.3192 30.848ZM16.3192 27.968C15.6472 27.968 15.0712 27.424 15.0712 26.72C15.0712 26.048 15.6472 25.472 16.3192 25.472C16.9912 25.472 17.5672 26.016 17.5672 26.72C17.5672 27.392 17.0232 27.968 16.3192 27.968ZM19.6152 31.264C18.9112 31.264 18.3672 30.72 18.3672 30.016C18.3992 29.344 18.9432 28.768 19.6152 28.768C20.2872 28.768 20.8632 29.312 20.8632 30.016C20.8632 30.688 20.3192 31.264 19.6152 31.264ZM19.6152 27.968C18.9112 27.968 18.3672 27.424 18.3672 26.72C18.3992 26.048 18.9432 25.472 19.6152 25.472C20.2872 25.472 20.8632 26.016 20.8632 26.72C20.8632 27.392 20.3192 27.968 19.6152 27.968Z" fill="currentColor">
+                                        </path>
+                                        <path d="M22.6857 5.85599H6.65366C6.07766 5.85599 5.59766 6.33599 5.59766 6.91199V17.472C5.59766 18.048 6.07766 18.528 6.65366 18.528H22.6857C23.2617 18.528 23.7417 18.048 23.7417 17.472V6.91199C23.7417 6.33599 23.2617 5.85599 22.6857 5.85599Z" fill="currentColor">
+                                        </path>
+                                        <path d="M11.8693 19.616V20.384H8.98931C8.70131 20.384 8.44531 20.608 8.44531 20.928C8.44531 21.216 8.66931 21.472 8.98931 21.472H20.3493C20.6373 21.472 20.8933 21.248 20.8933 20.928C20.8613 20.64 20.6373 20.384 20.3493 20.384H17.4693V19.616H11.8693Z" fill="currentColor">
+                                        </path>
+                                        <path d="M29.8565 22.048C27.3605 22.048 25.3125 24.096 25.3125 26.592V30.368C25.3125 32.448 27.0085 34.144 29.0885 34.144H30.5925C32.6725 34.144 34.3685 32.448 34.3685 30.368V26.592C34.4005 24.064 32.3525 22.048 29.8565 22.048ZM30.6245 27.328C30.6245 27.744 30.2725 28.096 29.8565 28.096C29.4405 28.096 29.0885 27.744 29.0885 27.328V24.32C29.0885 23.904 29.4405 23.552 29.8565 23.552C30.2725 23.552 30.6245 23.904 30.6245 24.32V27.328Z" fill="currentColor">
+                                        </path>
+                                    </svg>
+                                    附加配置
+                                    <svg width="40"
+                                         height="40"
+                                         viewBox="0 0 40 40"
+                                         fill="none"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M19 27.0004V21.0004H13V19.0004H19V13.0004H21V19.0004H27V21.0004H21V27.0004H19Z" fill="#6D2BBB">
+                                        </path>
+                                        <rect x="0.5" y="0.500427" width="39" height="39" rx="7.5" stroke="#6D2BBB" stroke-dasharray="5 5"></rect>
+                                    </svg>
+                                </button>
+                                <div class="svelte-10rl02j empty">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="options svelte-10rl02j">
+                            <div class="card svelte-10rl02j">
+                                <div style="display: flex; justify-content: space-between;">
+                                    <!-- Category Selector -->
+                                    <form method="POST"
+                                          action="{{ url_for('order_form') }}"
+                                          id="categoryForm"
+                                          style="flex: 1;
+                                                 margin-right: 1em">
+                                        {{ form.hidden_tag() }}
+                                        <div class="form-group">
+                                            <select name="category"
+                                                    id="category"
+                                                    class="form-control"
+                                                    style="max-height: 200px;
+                                                           overflow-y: auto">
+                                                <option value="all" {% if category_id == 'all' %}selected{% endif %}>
+                                                    All
+                                                </option>
+                                                {% for category in categories %}
+                                                    <option value="{{ category.id }}"
+                                                            {% if category.id == category_id %}selected{% endif %}>
+                                                        {{ category.name }}
+                                                    </option>
+                                                {% endfor %}
+                                            </select>
+                                            <button type="submit">
+                                                Submit
+                                            </button>
+                                        </div>
+                                    </form>
+                                    <!-- Product Search -->
+                                    <form method="GET" style="flex: 1;">
+                                        <input type="text"
+                                               name="query"
+                                               placeholder="Search products"
+                                               value="{{ request.args.get('query', '') }}">
+                                        <input type="submit" value="Search">
+                                    </form>
+                                </div>
+                                <div class="tags svelte-10rl02j">
+                                </div>
+                                <div class="svelte-10rl02j">
+                                    <div class="catalog svelte-10rl02j active">
+                                        <button class="svelte-10rl02j">
+                                            推薦清單
+                                            <svg width="20"
+                                                 height="20"
+                                                 viewBox="0 0 20 20"
+                                                 fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M3.72652 7.38053L9.61095 13.3657C9.71431 13.4709 9.85293 13.5297 9.99727 13.5297C10.1416 13.5297 10.2802 13.4709 10.3836 13.3657L16.2702 7.38053C16.3184 7.33156 16.3567 7.27302 16.3829 7.20835C16.4091 7.14368 16.4225 7.07419 16.4225 7.004C16.4225 6.93381 16.4091 6.86432 16.3829 6.79965C16.3567 6.73498 16.3184 6.67644 16.2702 6.62747C16.1714 6.52673 16.0387 6.47033 15.9005 6.47033C15.7623 6.47033 15.6296 6.52673 15.5308 6.62747L9.99727 12.2558L4.46484 6.62747C4.36605 6.52707 4.23359 6.47089 4.09568 6.47089C3.95777 6.47089 3.82532 6.52707 3.72652 6.62747C3.67832 6.67644 3.64001 6.73498 3.61385 6.79965C3.5877 6.86432 3.57422 6.93381 3.57422 7.004C3.57422 7.07419 3.5877 7.14368 3.61385 7.20835C3.64001 7.27302 3.67832 7.33156 3.72652 7.38053Z" fill="currentColor">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                        <button class="svelte-10rl02j">
+                                            電腦組件
+                                            <svg width="20"
+                                                 height="20"
+                                                 viewBox="0 0 20 20"
+                                                 fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M3.72652 7.38053L9.61095 13.3657C9.71431 13.4709 9.85293 13.5297 9.99727 13.5297C10.1416 13.5297 10.2802 13.4709 10.3836 13.3657L16.2702 7.38053C16.3184 7.33156 16.3567 7.27302 16.3829 7.20835C16.4091 7.14368 16.4225 7.07419 16.4225 7.004C16.4225 6.93381 16.4091 6.86432 16.3829 6.79965C16.3567 6.73498 16.3184 6.67644 16.2702 6.62747C16.1714 6.52673 16.0387 6.47033 15.9005 6.47033C15.7623 6.47033 15.6296 6.52673 15.5308 6.62747L9.99727 12.2558L4.46484 6.62747C4.36605 6.52707 4.23359 6.47089 4.09568 6.47089C3.95777 6.47089 3.82532 6.52707 3.72652 6.62747C3.67832 6.67644 3.64001 6.73498 3.61385 6.79965C3.5877 6.86432 3.57422 6.93381 3.57422 7.004C3.57422 7.07419 3.5877 7.14368 3.61385 7.20835C3.64001 7.27302 3.67832 7.33156 3.72652 7.38053Z" fill="currentColor">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                        <button class="svelte-10rl02j">
+                                            電腦
+                                            <svg width="20"
+                                                 height="20"
+                                                 viewBox="0 0 20 20"
+                                                 fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M3.72652 7.38053L9.61095 13.3657C9.71431 13.4709 9.85293 13.5297 9.99727 13.5297C10.1416 13.5297 10.2802 13.4709 10.3836 13.3657L16.2702 7.38053C16.3184 7.33156 16.3567 7.27302 16.3829 7.20835C16.4091 7.14368 16.4225 7.07419 16.4225 7.004C16.4225 6.93381 16.4091 6.86432 16.3829 6.79965C16.3567 6.73498 16.3184 6.67644 16.2702 6.62747C16.1714 6.52673 16.0387 6.47033 15.9005 6.47033C15.7623 6.47033 15.6296 6.52673 15.5308 6.62747L9.99727 12.2558L4.46484 6.62747C4.36605 6.52707 4.23359 6.47089 4.09568 6.47089C3.95777 6.47089 3.82532 6.52707 3.72652 6.62747C3.67832 6.67644 3.64001 6.73498 3.61385 6.79965C3.5877 6.86432 3.57422 6.93381 3.57422 7.004C3.57422 7.07419 3.5877 7.14368 3.61385 7.20835C3.64001 7.27302 3.67832 7.33156 3.72652 7.38053Z" fill="currentColor">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                        <button class="svelte-10rl02j">
+                                            電腦周邊
+                                            <svg width="20"
+                                                 height="20"
+                                                 viewBox="0 0 20 20"
+                                                 fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M3.72652 7.38053L9.61095 13.3657C9.71431 13.4709 9.85293 13.5297 9.99727 13.5297C10.1416 13.5297 10.2802 13.4709 10.3836 13.3657L16.2702 7.38053C16.3184 7.33156 16.3567 7.27302 16.3829 7.20835C16.4091 7.14368 16.4225 7.07419 16.4225 7.004C16.4225 6.93381 16.4091 6.86432 16.3829 6.79965C16.3567 6.73498 16.3184 6.67644 16.2702 6.62747C16.1714 6.52673 16.0387 6.47033 15.9005 6.47033C15.7623 6.47033 15.6296 6.52673 15.5308 6.62747L9.99727 12.2558L4.46484 6.62747C4.36605 6.52707 4.23359 6.47089 4.09568 6.47089C3.95777 6.47089 3.82532 6.52707 3.72652 6.62747C3.67832 6.67644 3.64001 6.73498 3.61385 6.79965C3.5877 6.86432 3.57422 6.93381 3.57422 7.004C3.57422 7.07419 3.5877 7.14368 3.61385 7.20835C3.64001 7.27302 3.67832 7.33156 3.72652 7.38053Z" fill="currentColor">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                        <button class="svelte-10rl02j">
+                                            最新推廣
+                                            <svg width="20"
+                                                 height="20"
+                                                 viewBox="0 0 20 20"
+                                                 fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M3.72652 7.38053L9.61095 13.3657C9.71431 13.4709 9.85293 13.5297 9.99727 13.5297C10.1416 13.5297 10.2802 13.4709 10.3836 13.3657L16.2702 7.38053C16.3184 7.33156 16.3567 7.27302 16.3829 7.20835C16.4091 7.14368 16.4225 7.07419 16.4225 7.004C16.4225 6.93381 16.4091 6.86432 16.3829 6.79965C16.3567 6.73498 16.3184 6.67644 16.2702 6.62747C16.1714 6.52673 16.0387 6.47033 15.9005 6.47033C15.7623 6.47033 15.6296 6.52673 15.5308 6.62747L9.99727 12.2558L4.46484 6.62747C4.36605 6.52707 4.23359 6.47089 4.09568 6.47089C3.95777 6.47089 3.82532 6.52707 3.72652 6.62747C3.67832 6.67644 3.64001 6.73498 3.61385 6.79965C3.5877 6.86432 3.57422 6.93381 3.57422 7.004C3.57422 7.07419 3.5877 7.14368 3.61385 7.20835C3.64001 7.27302 3.67832 7.33156 3.72652 7.38053Z" fill="currentColor">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                        <button class="svelte-10rl02j">
+                                            品牌專區
+                                            <svg width="20"
+                                                 height="20"
+                                                 viewBox="0 0 20 20"
+                                                 fill="none"
+                                                 xmlns="http://www.w3.org/2000/svg">
+                                                <path d="M3.72652 7.38053L9.61095 13.3657C9.71431 13.4709 9.85293 13.5297 9.99727 13.5297C10.1416 13.5297 10.2802 13.4709 10.3836 13.3657L16.2702 7.38053C16.3184 7.33156 16.3567 7.27302 16.3829 7.20835C16.4091 7.14368 16.4225 7.07419 16.4225 7.004C16.4225 6.93381 16.4091 6.86432 16.3829 6.79965C16.3567 6.73498 16.3184 6.67644 16.2702 6.62747C16.1714 6.52673 16.0387 6.47033 15.9005 6.47033C15.7623 6.47033 15.6296 6.52673 15.5308 6.62747L9.99727 12.2558L4.46484 6.62747C4.36605 6.52707 4.23359 6.47089 4.09568 6.47089C3.95777 6.47089 3.82532 6.52707 3.72652 6.62747C3.67832 6.67644 3.64001 6.73498 3.61385 6.79965C3.5877 6.86432 3.57422 6.93381 3.57422 7.004C3.57422 7.07419 3.5877 7.14368 3.61385 7.20835C3.64001 7.27302 3.67832 7.33156 3.72652 7.38053Z" fill="currentColor">
+                                                </path>
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <div class="result svelte-10rl02j">
+                                        <div class="head svelte-10rl02j">
+                                        </div>
+                                        <div class="filter svelte-10rl02j active">
+                                            <div class="price-range svelte-10rl02j">
+                                                <div class="svelte-1pzcx2u noUi-target noUi-ltr noUi-horizontal noUi-txt-dir-ltr">
+                                                    <div class="noUi-base">
+                                                        <div class="noUi-connects">
+                                                            <div class="noUi-connect"
+                                                                 style="transform: translate(0%, 0px) scale(1, 1)">
+                                                            </div>
+                                                        </div>
+                                                        <div class="noUi-origin"
+                                                             style="transform: translate(-100%, 0px);
+                                                                    z-index: 5">
+                                                            <div class="noUi-handle noUi-handle-lower"
+                                                                 data-handle="0"
+                                                                 tabindex="0"
+                                                                 role="slider"
+                                                                 aria-orientation="horizontal"
+                                                                 aria-valuemin="-250.0"
+                                                                 aria-valuemax="483888.0"
+                                                                 aria-valuenow="-250.0"
+                                                                 aria-valuetext="-250.00">
+                                                                <div class="noUi-touch-area">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="noUi-origin" style="transform: translate(0%, 0px); z-index: 4">
+                                                            <div class="noUi-handle noUi-handle-upper"
+                                                                 data-handle="1"
+                                                                 tabindex="0"
+                                                                 role="slider"
+                                                                 aria-orientation="horizontal"
+                                                                 aria-valuemin="-250.0"
+                                                                 aria-valuemax="483888.0"
+                                                                 aria-valuenow="483888.0"
+                                                                 aria-valuetext="483888.00">
+                                                                <div class="noUi-touch-area">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <!-- show product -->
+                                        <div class="table-container svelte-10rl02j" id="productList">
+                                            <table id="table" class="svelte-10rl02j">
+                                                <tr class="svelte-10rl02j">
+                                                    <th class="svelte-10rl02j">
+                                                        <button class="svelte-tn0eqc" style="--right: 0;">
+                                                            產品
+                                                        </button>
+                                                    </th>
+                                                    <th class="svelte-10rl02j">
+                                                        <tr class="svelte-10rl02j">
+                                                            <td class="svelte-10rl02j">
+                                                                {% for product in products %}
+                                                                    <div style="display: flex; align-items: center;">
+                                                                        <div style="margin-right: 1em;">
+                                                                            <h2>
+                                                                                Product ID: {{ product.id }}
+                                                                            </h2>
+                                                                            <h2>
+                                                                                Product Name: {{ product.name }}
+                                                                            </h2>
+                                                                            <h2>
+                                                                                Product Price: {{ product.price }}
+                                                                            </h2>
+                                                                        </div>
+                                                                        <form method="POST" action="{{ url_for('add_to_cart') }}">
+                                                                            <input type="hidden" name="product_id" value="{{ product.id }}">
+                                                                            <input type="submit" value="Add to Cart">
+                                                                        </form>
+                                                                    </div>
+                                                                {% endfor %}
+                                                            </td>
+                                                        </tr>
+                                                    </th>
+                                                </table>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- cart -->
+                            <div>
+                                <h3 class="bold">
+                                    <i class="glyphicon glyphicon-th-list"></i> Cart Summary
+                                </h3>
+                                <div class="panel panel-primary">
+                                    <div class="panel-body">
+                                        Current Cart Value
+                                    </div>
+                                    <ul class="list-group">
+                                        <li class="list-group-item">
+                                            <p>
+                                                {{ quantity_total }} Items <strong class="pull-right">&dollar;{{ grand_total }}</strong>
+                                            </p>
+                                            <p>
+                                                24hr Shipping <strong class="pull-right">&dollar;100</strong>
+                                            </p>
+                                        </li>
+                                        {% for item, quantity in cart_items %}
+                                            <li class="list-group-item">
+                                                <p>
+                                                    Product Name: {{ item.name }}
+                                                </p>
+                                                <p>
+                                                    Quantity: {{ quantity }}
+                                                </p>
+                                                <!-- 添加一個 "Remove" 按鈕 -->
+                                                <form action="{{ url_for('remove_from_cart', item_id=item.id) }}"
+                                                      method="post">
+                                                    <input type="submit" value="Remove">
+                                                </form>
+                                            </li>
+                                        {% endfor %}
+                                        <li class="list-group-item">
+                                            <p>
+                                                Total <strong class="pull-right">&dollar;{{ grand_total_plus_shipping }}</strong>
+                                            </p>
+                                        </li>
+                                    </ul>
+                                    <div class="panel-footer">
+                                        {% if quantity_total>0 %}
+                                            <a href="{{ url_for('checkout') }}" class="btn btn-primary btn-sm">
+                                                Checkout <i class="glyphicon glyphicon-chevron-right"></i>
+                                            </a>
+                                            <a href="{{ url_for('clear_cart') }}"
+                                               class="btn btn-danger btn-sm pull-right">
+                                                Clear Cart <i class="glyphicon glyphicon-trash"></i>
+                                            </a>
+                                        {% else %}
+                                            <a href="#" class="btn btn-primary btn-sm">
+                                                Checkout <i class="glyphicon glyphicon-chevron-right"></i>
+                                            </a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
                 </div>
             </div>
-        </div>
-    </div>
-{% endblock %}
+        {% endblock %}
