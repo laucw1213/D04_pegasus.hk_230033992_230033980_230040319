@@ -205,7 +205,6 @@ def unfollow(username):
     return redirect(url_for('user', username=username))
 
 @app.route('/order_form', methods=['GET', 'POST'])
-@login_required
 def order_form():
     form = OrderForm()
     query = request.args.get('query')  # 從請求參數中獲取查詢字串
@@ -370,6 +369,7 @@ def clear_cart():
     return redirect(url_for('order_form'))
 
 @app.route('/checkout', methods=['GET', 'POST'])
+@login_required
 def checkout():
     form = CheckoutForm()
     # 獲取當前用戶的購物車
@@ -500,7 +500,7 @@ def aboutus():
 @app.route('/home')
 def home():
 
-    return render_template('home.html.j2', title=_('home'))
+    return render_template('home.html.j2', title=_('產品目錄'))
 
 @app.route('/storage/ssd')
 def ssd_storage():

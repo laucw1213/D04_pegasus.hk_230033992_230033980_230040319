@@ -79,12 +79,17 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li>
-                        <form class="navbar-form navbar-left" role="search">
+                        <form class="navbar-form navbar-left"
+                              role="search"
+                              action="https://shop.pegasus.hk/search"
+                              method="get"
+                              target="_blank">
                             <div class="form-group">
                                 <input type="text"
-                                       class="form-control"
-                                       placeholder="搜尋產品..."
-                                       style="width: 600px">
+                                    name="searchKey"
+                                    class="form-control"
+                                    placeholder="搜尋產品..."
+                                    style="width: 600px; background-color: #F0F0F0;">
                             </div>
                             <button type="submit" style="background-color: purple; color: white;">
                                 <svg xmlns="http://www.w3.org/2000/svg"
@@ -100,17 +105,31 @@
                                  style="display: flex;
                                         flex-wrap: wrap;
                                         align-items: center">
-                                <div class="hot-title svelte-1k7y91a" data-svelte-h="svelte-ovgdyn">熱門搜尋 :</div>
-                                <button class="svelte-1k7y91a">4070 super</button>
-                                <button class="svelte-1k7y91a">4060</button>
-                                <button class="svelte-1k7y91a">4090</button>
-                                <button class="svelte-1k7y91a">AMD Ryzen 7</button>
-                                <button class="svelte-1k7y91a">
-                                    WD
-                                </button>
-                                <button class="svelte-1k7y91a">
-                                    MSI
-                                </button>
+                                <div class="hot-title svelte-1k7y91a" data-svelte-h="svelte-ovgdyn">熱門搜尋 :</div>&nbsp; &nbsp;
+                                <a href="https://shop.pegasus.hk/search?searchKey=4070+super"
+                                    class="svelte-1k7y91a"
+                                    style="margin-right: 10px; color: black; text-decoration: none;"
+                                    target="_blank">4070 super</a> &vert;&nbsp; &nbsp;
+                                <a href="https://shop.pegasus.hk/search?searchKey=4060"
+                                    class="svelte-1k7y91a"
+                                    style="margin-right: 10px; color: black; text-decoration: none;"
+                                    target="_blank">4060</a> &vert;&nbsp; &nbsp;
+                                <a href="https://shop.pegasus.hk/search?searchKey=4090"
+                                    class="svelte-1k7y91a"
+                                    style="margin-right: 10px; color: black; text-decoration: none;"
+                                    target="_blank">4090</a> &vert;&nbsp; &nbsp;
+                                <a href="https://shop.pegasus.hk/search?searchKey=AMD Ryzen 7"
+                                    class="svelte-1k7y91a"
+                                    style="margin-right: 10px; color: black; text-decoration: none;"
+                                    target="_blank">AMD Ryzen 7</a> &vert;&nbsp; &nbsp;
+                                <a href="https://shop.pegasus.hk/search?searchKey=WD"
+                                    class="svelte-1k7y91a"
+                                    style="margin-right: 10px; color: black; text-decoration: none;"
+                                    target="_blank">WD</a> &vert;&nbsp; &nbsp;
+                                <a href="https://shop.pegasus.hk/search?searchKey=MSI"
+                                    class="svelte-1k7y91a"
+                                    style="margin-right: 10px; color: black; text-decoration: none;"
+                                    target="_blank">MSI</a>
                             </div>
                         </form>
                     </li>
