@@ -898,35 +898,32 @@
                                         <div class="table-container svelte-10rl02j" id="productList">
                                             <table id="table" class="svelte-10rl02j">
                                                 <tr class="svelte-10rl02j">
+
                                                     <th class="svelte-10rl02j">
-                                                        <button class="svelte-tn0eqc" style="--right: 0;">
-                                                            產品
-                                                        </button>
-                                                    </th>
-                                                    <th class="svelte-10rl02j">
-                                                        <tr class="svelte-10rl02j">
-                                                            <td class="svelte-10rl02j">
-                                                                {% for product in products %}
+                                                        {% for product in products %}
+                                                            <tr class="svelte-10rl02j">
+                                                                <td class="svelte-10rl02j">
                                                                     <div style="display: flex; align-items: center;">
                                                                         <div style="margin-right: 1em;">
-                                                                            <h2>
+                                                                            <img src="{{ url_for('static', filename=product.image_path) }}" alt="{{ product.name }}" width="100" height="100">
+                                                                            <p>
                                                                                 Product ID: {{ product.id }}
-                                                                            </h2>
-                                                                            <h2>
+                                                                            </p>
+                                                                            <p>
                                                                                 Product Name: {{ product.name }}
-                                                                            </h2>
-                                                                            <h2>
+                                                                            </p>
+                                                                            <p>
                                                                                 Product Price: {{ product.price }}
-                                                                            </h2>
+                                                                            </p>
                                                                         </div>
-                                                                        <form method="POST" action="{{ url_for('add_to_cart') }}">
+                                                                        <form method="POST" action="{{ url_for('add_to_cart') }}" style="margin-left: auto;">
                                                                             <input type="hidden" name="product_id" value="{{ product.id }}">
                                                                             <input type="submit" value="Add to Cart">
                                                                         </form>
                                                                     </div>
-                                                                {% endfor %}
-                                                            </td>
-                                                        </tr>
+                                                                </td>
+                                                            </tr>
+                                                        {% endfor %}
                                                     </th>
                                                 </table>
                                             </div>
