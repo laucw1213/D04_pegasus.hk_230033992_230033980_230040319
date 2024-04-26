@@ -24,8 +24,8 @@
                             <input type="submit"
                                 value="Checkout"
                                 {% if not current_user.is_authenticated or cart.items.count() == 0 %}disabled{% endif %}>
-                            {% if not current_user.is_authenticated %}<span>Please log in to proceed with checkout.</span>{% endif %}
-                            {% if cart.items.count() == 0 %}<span>Your cart is empty. Please add some items before checkout.</span>{% endif %}
+                                {% if not current_user.is_authenticated %}<span style="color: red;">Please log in to proceed with checkout.</span>{% endif %}
+                                {% if cart.items.count() == 0 %}<span style="color: red;">Your cart is empty. Please add some items before checkout.</span>{% endif %}
                         </form>
                     </div>
                 </form>

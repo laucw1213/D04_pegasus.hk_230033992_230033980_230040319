@@ -369,7 +369,6 @@ def clear_cart():
     return redirect(url_for('order_form'))
 
 @app.route('/checkout', methods=['GET', 'POST'])
-@login_required
 def checkout():
     form = CheckoutForm()
     # 獲取當前用戶的購物車

@@ -918,7 +918,8 @@
                                                                         </div>
                                                                         <form method="POST" action="{{ url_for('add_to_cart') }}" style="margin-left: auto;">
                                                                             <input type="hidden" name="product_id" value="{{ product.id }}">
-                                                                            <input type="submit" value="Add to Cart">
+                                                                            <input type="submit" value="Add to Cart" {% if not current_user.is_authenticated %}disabled{% endif %}>
+                                                                            {% if not current_user.is_authenticated %}<span style="color: red;">Please log in to proceed with checkout.</span>{% endif %}
                                                                         </form>
                                                                     </div>
                                                                 </td>
@@ -932,6 +933,7 @@
                                 </div>
                             </div>
                             <!-- cart -->
+                            {% if current_user.is_authenticated %}
                             <div>
                                 <h3 class="bold">
                                     <i class="glyphicon glyphicon-th-list"></i> Cart Summary
@@ -986,7 +988,7 @@
                                         {% endif %}
                                     </div>
                                 </div>
-                            </div>
+                            </div>{% endif %}
                         </div>
                     </main>
                 </div>
