@@ -1,16 +1,153 @@
 {% extends "base.html.j2" %}
-{% import 'bootstrap/wtf.html' as wtf %}
+{% block head %}
+    {{ super() }}
+    <style>
+        label {
+          font-size: 16px;  /* 更改字體大小 */
+        }
+
+        #username, #password {
+            background-color: lightgray;  /* 更改背景顏色為淺灰色 */
+            border-radius: 0;  /* 去掉邊角的弧形 */
+        }
+
+          * {
+        font-family: 微軟正黑體;
+      }
+
+      body {
+        background-color: white;
+      }
+
+      #username,
+      #password,
+      h3,
+      #fullname,
+      #comfirm_password,
+      #username2,
+      #password2 {
+        width: 280px;
+        height: 30px;
+        margin: 1px;
+        color: black;
+      }
+
+      h5 {
+        margin: 20px;
+        color: #a3a2a3;
+      }
+
+      h5:hover {
+        color: black;
+      }
+
+      #container1,
+      #container2 {
+        /*margin: 50px;*/
+        padding: 35px;
+        width: 353px;
+        height: 436px;
+        background-color: white;
+        border-radius: 5px;
+        box-shadow: 0 0px 70px rgba(0, 0, 0, 0.1);
+
+        /*定位對齊*/
+        position: relative;
+        margin: auto;
+        top: 100px;
+        /*text-align:center;*/
+      }
+
+      .system_name {
+        /*定位對齊*/
+        position: relative;
+        margin: auto;
+        top: 100px;
+        text-align: center;
+      }
+
+      .submit {
+        color: white;
+        background: purple;
+        width: 280px;
+        height: 30px;
+        margin: 1px;
+        padding: 5px;
+        border-radius: 5px;
+        border: 0px;
+      }
+
+      .submit:hover {
+        background: #db6937;
+      }
+
+      #container2 {
+        visibility: hidden; /*剛開始消失*/
+        height: 350px;
+      }
+
+      #copyright {
+        text-align: center;
+        color: #a3a2a3;
+        margin: -200px 0px 0px 0px;
+        font-size: 14px;
+      }
+
+      input {
+        padding: 5px;
+        border: none;
+        border: solid 1px #ccc;
+        border-radius: 5px;
+      }
+    </style>
+{% endblock %}
 {% block app_content %}
-    <h1>{{ _('Sign In') }}</h1>
-    <div class="row">
-        <div class="col-md-4">{{ wtf.quick_form(form) }}</div>
+    <div class="login_page">
+        <div id="container1">
+            <div class="login">
+                <h3>
+                    <b>登入</b>
+                </h3>
+                <br>
+                <form action="{{ url_for('login') }}" method="post">
+                    {{ form.hidden_tag() }}
+                    <div>
+                        <label for="username">用戶名稱(登入方式改左用 用戶名稱!)</label>
+                        {{ form.username(id="username", size=32, placeholder="") }}
+                    </div>
+                    <br>
+                    <div>
+                        <label for="username">密碼</label>
+                        {{ form.password(id="password", size=32, placeholder="") }}
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <div>
+                            <br>
+                            {{ form.remember_me() }}
+                            <label for="remember_me">記住登入資訊</label>
+                        </div>
+                        <div>
+                            <br>
+                            <a href="{{ url_for('reset_password_request') }}"
+                               style="color: purple;
+                                      text-decoration: underline;
+                                      font-size: 15px">忘記密碼？</a>
+                        </div>
+                    </div>
+                    <br>
+                    <div>
+                        <input type="submit" value="登入" class="submit">
+                    </div>
+
+                </form>
+                <h5 style="text-align: center;">
+                    <b style="color: black; font-size: 15px;">沒有帳號?</b>
+                    <a href="{{ url_for('register') }}"
+                       style="color: purple;
+                              text-decoration: underline;
+                              font-size: 15px">到此註冊帳號</a>
+                </h5>
+            </div>
+        </div>
     </div>
-    <br/>
-    <p>
-        {{ _('New User?') }} <a href="{{ url_for('register') }}">{{ _('Click to Register!') }}</a>
-    </p>
-    <p>
-        {{ _('Forgot Your Password?') }}
-        <a href="{{ url_for('reset_password_request') }}">{{ _('Click to Reset It') }}</a>
-    </p>
 {% endblock %}

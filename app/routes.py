@@ -499,4 +499,17 @@ def aboutus():
 
 @app.route('/home')
 def home():
-    return render_template('home.html.j2', title=_('產品目錄'))
+
+    return render_template('home.html.j2', title=_('home'))
+
+@app.route('/storage/ssd')
+def ssd_storage():
+    return render_template('ssd_storage.html.j2')
+
+@app.route('/storage/hdd')
+def hdd_storage():
+    # 这里是处理逻辑
+    return render_template('hdd_storage.html.j2')
+
+    
+
