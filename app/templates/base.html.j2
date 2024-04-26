@@ -1,9 +1,13 @@
 {% extends 'bootstrap/base.html' %}
+{% block head %}
+    {{ super() }}
+    <link rel="icon" href="https://shop.pegasus.hk/favicon.ico">
+{% endblock %}
 {% block title %}
     {% if title %}
-        {{ title }} - Microblog
+        {{ title }}｜飛馬電腦 PEGASUS｜砌機電腦配件專門店
     {% else %}
-        {{ _('Welcome to Microblog') }}
+        {{ _('飛馬電腦 PEGASUS｜砌機電腦配件專門店') }}
     {% endif %}
 {% endblock %}
 {% block navbar %}
@@ -185,9 +189,6 @@
                                     <a href="{{ url_for('user', username=current_user.username) }}">{{ _('Profile') }}</a>
                                 </li>
                                 <li>
-                                    <a href="{{ url_for('explore') }}">{{ _('Explore') }}</a>
-                                </li>
-                                <li>
                                     <a href="{{ url_for('order_info') }}">Order Info</a>
                                 </li>
                                 <li>
@@ -221,13 +222,13 @@
                       letter-spacing: 2px;
                       margin-right: 10px">產品目錄</a>
             <a class="d-none d-md-inline-block link"
-               href="#"
+               href="{{ url_for('home') }}"
                style="color: white;
                       font-size: 18px;
                       letter-spacing: 2px;
                       margin-right: 10px">電腦砌機組合</a>
             <a class="d-none d-md-inline-block link"
-               href="#"
+               href="{{ url_for('home') }}"
                style="color: white;
                       font-size: 18px;
                       letter-spacing: 2px;
