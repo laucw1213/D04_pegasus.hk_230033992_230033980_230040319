@@ -77,7 +77,10 @@
                     <li>
                         <form class="navbar-form navbar-left" role="search">
                             <div class="form-group">
-                                <input type="text" class="form-control" placeholder="搜尋產品..." style="width: 600px;">
+                                <input type="text"
+                                       class="form-control"
+                                       placeholder="搜尋產品..."
+                                       style="width: 600px">
                             </div>
                             <button type="submit" style="background-color: purple; color: white;">
                                 <svg xmlns="http://www.w3.org/2000/svg"
@@ -96,12 +99,8 @@
                                 <div class="hot-title svelte-1k7y91a" data-svelte-h="svelte-ovgdyn">熱門搜尋 :</div>
                                 <button class="svelte-1k7y91a">4070 super</button>
                                 <button class="svelte-1k7y91a">4060</button>
-                                <button class="svelte-1k7y91a">
-                                    4090
-                                </button>
-                                <button class="svelte-1k7y91a">
-                                    AMD Ryzen 7
-                                </button>
+                                <button class="svelte-1k7y91a">4090</button>
+                                <button class="svelte-1k7y91a">AMD Ryzen 7</button>
                                 <button class="svelte-1k7y91a">
                                     WD
                                 </button>
@@ -117,28 +116,28 @@
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown"><b>常見問題</b><b class="caret"></b></a>
                         <ul class="dropdown-menu">
                             <li>
-                                <a href="#">聯絡我們</a>
+                                <a href="{{ url_for('contact_us') }}">聯絡我們</a>
                             </li>
                             <li>
-                                <a href="#">退貨及售後支援</a>
+                                <a href="{{ url_for('after_sales') }}">退貨及售後支援</a>
                             </li>
                             <li>
-                                <a href="#">購買流程</a>
+                                <a href="{{ url_for('purchase_process') }}">購買流程</a>
                             </li>
                             <li>
-                                <a href="#">付款方式</a>
+                                <a href="{{ url_for('payment_method') }}">付款方式</a>
                             </li>
                             <li>
-                                <a href="#">除舊服務條款</a>
+                                <a href="{{ url_for('removal_service') }}">除舊服務條款</a>
                             </li>
                             <li>
-                                <a href="#">飛馬電腦節2021</a>
+                                <a href="{{ url_for('PC_festival') }}">飛馬電腦節2021</a>
                             </li>
                             <li>
-                                <a href="#">意見回饋</a>
+                                <a href="{{ url_for('feedback') }}">意見回饋</a>
                             </li>
                             <li>
-                                <a href="#">關於我們</a>
+                                <a href="{{ url_for('aboutus') }}">關於我們</a>
                             </li>
                         </ul>
                     </li>
@@ -156,7 +155,17 @@
                     </li>
                     {% if current_user.is_anonymous %}
                         <li>
-                            <a href="{{ url_for('login') }}">{{ _('Login') }}</a>
+                            <a href="{{ url_for('login') }}">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     width="20"
+                                     height="20"
+                                     fill="black"
+                                     class="bi bi-person-circle"
+                                     viewBox="0 0 16 16">
+                                    <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0"/>
+                                    <path fill-rule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8m8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1"/>
+                                </svg>
+                            </a>
                         </li>
                     {% else %}
                         <li class="dropdown">

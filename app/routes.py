@@ -448,6 +448,38 @@ def quadro_cards():
     # 這裡是處理邏輯
     return render_template('quadro_cards.html')
 
+@app.route('/contact_us')
+def contact_us():
+    return render_template('AboutUs_contact_us.html.j2', title=_('Contact Us'))
+
+@app.route('/after-sales')
+def after_sales():
+    return render_template('AboutUs_after-sales.html.j2', title=_('After-sales'))
+
+@app.route('/purchase_process')
+def purchase_process():
+    return render_template('AboutUs_purchase_process.html.j2', title=_('purchase_process'))
+
+@app.route('/payment_method')
+def payment_method():
+    return render_template('AboutUs_payment_method.html.j2', title=_('payment_method'))
+
+@app.route('/removal_service')
+def removal_service():
+    return render_template('AboutUs_removal_service.html.j2', title=_('removal_service'))
+
+@app.route('/PC_festival')
+def PC_festival():
+    return render_template('AboutUs_PC_festival.html.j2', title=_('PC_festival'))
+
+@app.route('/feedback')
+def feedback():
+    return render_template('AboutUs_feedback.html.j2', title=_('feedback'))
+
+@app.route('/aboutus')
+def aboutus():
+    return render_template('AboutUs_aboutus.html.j2', title=_('aboutus'))
+
 @app.route('/home')
 def home():
     return render_template('home.html.j2', title=_('home'))
