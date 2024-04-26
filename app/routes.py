@@ -498,7 +498,7 @@ def aboutus():
 
 @app.route('/home')
 def home():
-<<<<<<< HEAD
+
     return render_template('home.html.j2', title=_('home'))
 
 @app.route('/storage/ssd')
@@ -509,6 +509,6 @@ def ssd_storage():
 def hdd_storage():
     # 这里是处理逻辑
     return render_template('hdd_storage.html.j2')
-=======
-    return render_template('home.html.j2', title=_('產品目錄'))
->>>>>>> 2c7b53e4f8cb87ceefcf468590eef2d999f6ab3e
+
+    
+
