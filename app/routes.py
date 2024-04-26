@@ -6,7 +6,7 @@ from werkzeug.urls import url_parse
 from flask_babel import _, get_locale
 from app import app, db
 from app.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm, \
-    ResetPasswordRequestForm, ResetPasswordForm, OrderForm
+    ResetPasswordRequestForm, ResetPasswordForm, OrderForm, CheckoutForm
 from app.models import User, Post, Product, Order, Category, Cart, CartItem, OrderItem
 from app.email import send_password_reset_email
 
@@ -371,6 +371,7 @@ def clear_cart():
 
 @app.route('/checkout', methods=['GET', 'POST'])
 def checkout():
+    form = CheckoutForm()
     # 獲取當前用戶的購物車
     cart = Cart.query.get(session['cart_id'])
 
@@ -415,7 +416,7 @@ def checkout():
 
         # 結帳完成後，重定向到一個新的頁面，例如訂單確認頁面
         return redirect(url_for('order_confirmation', order_id=order.id))
-    return render_template('checkout.html.j2', cart=cart, total_price=total_price, quantity_total=quantity_total, grand_total=grand_total, grand_total_plus_shipping=grand_total_plus_shipping)
+    return render_template('checkout.html.j2', form=form, cart=cart, total_price=total_price, quantity_total=quantity_total, grand_total=grand_total, grand_total_plus_shipping=grand_total_plus_shipping)
 
 @app.route('/order_confirmation/<int:order_id>', methods=['GET'])
 @login_required

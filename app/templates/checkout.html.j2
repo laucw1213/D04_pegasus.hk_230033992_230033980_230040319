@@ -1,26 +1,73 @@
 {% extends "base.html.j2" %}
 {% import 'bootstrap/wtf.html' as wtf %}
 {% block app_content %}
-<h1>Checkout</h1>
-
-<table>
-    <tr>
-        <th>Product</th>
-        <th>Price</th>
-    </tr>
-    {% for product in cart.products %}
-    <tr>
-        <td>{{ product.name }}</td>
-        <td>{{ product.price }}</td>
-    </tr>
-    {% endfor %}
-</table>
-
-<p>Total: {{ grand_total_plus_shipping }}</p>
-<form method="post">
-    <input type="submit" value="Checkout" {% if not current_user.is_authenticated %}disabled{% endif %}>
-    {% if not current_user.is_authenticated %}
-    <span>Please log in to proceed with checkout.</span>
-    {% endif %}
-</form>
+    <div class="row">
+        <div class="col-lg-8">
+            <h3 class="bold">
+                <i class="glyphicon glyphicon-pencil"></i> Shipping Information
+            </h3>
+            <div class="panel panel-primary">
+                <form method="POST" action="{{ url_for('checkout') }}">
+                    <div class="panel-body">
+                            <th>Product</th>
+                            <th>Price</th>
+                            {% for product in cart.products %}
+                                <tr>
+                                    <td>{{ product.name }}</td>
+                                    <td>{{ product.price }}</td>
+                                </tr>
+                            {% endfor %}
+                            <p>Total: {{ grand_total_plus_shipping }}</p>
+                    </div>
+                    <div class="panel-footer">
+                        <form method="post">
+                            <input type="submit"
+                                   value="Checkout"
+                                   {% if not current_user.is_authenticated %}disabled{% endif %}>
+                            {% if not current_user.is_authenticated %}<span>Please log in to proceed with checkout.</span>{% endif %}
+                        </form>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <h3 class="bold">
+                <i class="glyphicon glyphicon-th-list"></i> Cart Details
+            </h3>
+            <div class="panel panel-primary">
+                <div class="panel-body">Current Cart Value</div>
+                <ul class="list-group">
+                                        <li class="list-group-item">
+                                            <p>
+                                                {{ quantity_total }} Items <strong class="pull-right">&dollar;{{ grand_total }}</strong>
+                                            </p>
+                                            <p>
+                                                24hr Shipping <strong class="pull-right">&dollar;100</strong>
+                                            </p>
+                                        </li>
+                                        {% for item, quantity in cart_items %}
+                                            <li class="list-group-item">
+                                                <p>
+                                                    Product Name: {{ item.name }}
+                                                </p>
+                                                <p>
+                                                    Quantity: {{ quantity }}
+                                                </p>
+                                                <!-- 添加一個 "Remove" 按鈕 -->
+                                                <form action="{{ url_for('remove_from_cart', item_id=item.id) }}"
+                                                      method="post">
+                                                    <input type="submit" value="Remove">
+                                                </form>
+                                            </li>
+                                        {% endfor %}
+                                        <li class="list-group-item">
+                                            <p>
+                                                Total <strong class="pull-right">&dollar;{{ grand_total_plus_shipping }}</strong>
+                                            </p>
+                                        </li>
+                                    </ul>
+            </div>
+            
+        </div>
+    </div>
 {% endblock %}

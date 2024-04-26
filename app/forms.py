@@ -74,3 +74,8 @@ class OrderForm(FlaskForm):
     product_id = IntegerField('Product ID', validators=[DataRequired()])
     product_category = SelectField('Product Category', choices=[])  # Add this line
     submit = SubmitField('Submit')
+
+class CheckoutForm(FlaskForm):
+    name = StringField('Name', validators=[DataRequired()])
+    address = StringField('Address', validators=[DataRequired()])
+    submit = SubmitField('Submit')
