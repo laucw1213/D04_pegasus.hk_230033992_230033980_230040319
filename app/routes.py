@@ -212,9 +212,10 @@ def order_form():
 
     if request.method == 'POST':
         category_id = request.form.get('category')
-        if category_id:
+        if category_id == 'all':
+            products = Product.query.all()
+        else:
             products = Product.query.filter_by(category_id=category_id).all()  # filter products by category
-
     if query:
         products = Product.query.filter(Product.name.contains(query)).all()  # 如果有查詢字串，則查詢名稱包含該字串的所有產品
 
@@ -260,6 +261,19 @@ def order_info():
     orders = Order.query.filter_by(user_id=current_user.id).all()
     order = orders[0] if orders else None
     return render_template('order_info.html.j2', orders=orders, order=order)
+
+@app.route('/delete_order/<int:order_id>', methods=['POST'])
+@login_required
+def delete_order(order_id):
+    order = Order.query.get_or_404(order_id)
+    if order.user_id != current_user.id:
+        flash('You do not have permission to delete this order.', 'error')
+        return redirect(url_for('order_info'))
+
+    db.session.delete(order)
+    db.session.commit()
+    flash('Order has been deleted.', 'success')
+    return redirect(url_for('order_info'))
 
 
 
