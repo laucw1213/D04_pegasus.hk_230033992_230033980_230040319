@@ -447,3 +447,7 @@ def intel_2_graphics():
 def quadro_cards():
     # 這裡是處理邏輯
     return render_template('quadro_cards.html')
+
+@app.route('/home')
+def home():
+    return render_template('home.html.j2', title=_('home'))
