@@ -256,7 +256,7 @@ def order_form():
     shipping_cost = 100  # 請根據您的運費策略設定這個值
     grand_total_plus_shipping = grand_total + shipping_cost
 
-    return render_template('order_form.html.j2', title='Order Form', form=form, products=products, categories=categories, cart_items=cart_items, total_price=total_price, quantity_total=quantity_total, grand_total=grand_total, grand_total_plus_shipping=grand_total_plus_shipping)
+    return render_template('order_form.html.j2', title='自選砌機', form=form, products=products, categories=categories, cart_items=cart_items, total_price=total_price, quantity_total=quantity_total, grand_total=grand_total, grand_total_plus_shipping=grand_total_plus_shipping)
 
 
 @app.route('/order_info', methods=['GET', 'POST'])
@@ -273,15 +273,6 @@ def delete_order(order_id):
     if order.user_id != current_user.id:
         flash('You do not have permission to delete this order.', 'error')
         return redirect(url_for('order_info'))
-<<<<<<< HEAD
-=======
-
-    db.session.delete(order)
-    db.session.commit()
-    flash('Order has been deleted.', 'success')
-    return redirect(url_for('order_info'))
-
->>>>>>> dbd768eb7b9ed1cf0be30a055c5b24e50a23fab1
 
     db.session.delete(order)
     db.session.commit()
