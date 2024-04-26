@@ -375,8 +375,8 @@ def checkout():
     # 獲取當前用戶的購物車
     cart = Cart.query.get(session['cart_id'])
 
-    if cart is None:
-        # 如果 cart 為 None，則重定向到首頁
+    if cart is None or not cart.items:
+        # 如果 cart 為 None 或者 cart.items 為空，則重定向到首頁
         return redirect(url_for('index'))
 
     # 獲取購物車中的產品信息

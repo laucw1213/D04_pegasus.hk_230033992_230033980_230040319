@@ -133,8 +133,8 @@ class Product(db.Model):
     price = db.Column(db.Float)
     cart_id = db.Column(db.Integer, db.ForeignKey('cart.id'))
     category_id = db.Column(db.Integer, db.ForeignKey('category.id'))
+    image_path = db.Column(db.String(128))  # 新增的圖片路徑欄位
     
-    image_data = db.Column(db.LargeBinary, nullable=True)
 
 class OrderItem(db.Model):
     id = db.Column(db.Integer, primary_key=True)
