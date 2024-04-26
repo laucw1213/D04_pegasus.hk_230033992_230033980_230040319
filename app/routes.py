@@ -214,7 +214,7 @@ def order_form():
 
 
 
-        if request.method == 'POST':
+    if request.method == 'POST':
         category_id = request.form.get('category')
         if category_id == 'all':
             products = Product.query.all()
