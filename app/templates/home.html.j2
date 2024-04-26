@@ -85,10 +85,10 @@
                             <button class="dropbtn">儲存裝置</button>
                             <div class="dropdown-content">
                                 <li>
-                                    <a href="/storage/ssd">SSD</a>
+                                    <a href="{{ url_for('ssd_storage') }}">固態硬碟 (SSD)</a>
                                 </li>
                                 <li>
-                                    <a href="/storage/hdd">HDD</a>
+                                    <a href="{{ url_for('hdd_storage') }}">硬碟 (HDD)</a>
                                 </li>
                             </div>
                         </div>
@@ -520,7 +520,7 @@
                                     </p>
                                 </a>
                                 <div class="item-main svelte-1t16q48">
-                                    <a href="/categories/storage/SSD" class="svelte-1t16q48">固態硬碟 (SSD)</a><a href="/categories/storage/HDD" class="svelte-1t16q48">硬碟 (HDD)</a>
+                                    <a href="{{ url_for('ssd_storage') }}">固態硬碟 (SSD)</a><a href="{{ url_for('hdd_storage') }}">硬碟 (HDD)</a>
                                 </div>
                             </div>
                         </td>
