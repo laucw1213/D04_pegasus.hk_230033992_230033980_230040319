@@ -208,6 +208,8 @@ def order_form():
     categories = Category.query.all()
     products = Product.query.all()  # Define products here
 
+
+
     if request.method == 'POST':
         category_id = request.form.get('category')
         if category_id:
@@ -415,3 +417,33 @@ def add_product():
     db.session.add(new_product)
     db.session.commit()
     return 'Product added to database.'
+
+@app.route('/intel')
+def intel():
+    # 這裡添加處理邏輯
+    return render_template('Intel.html')
+
+@app.route('/Amd')
+def Amd():
+    # 這裡添加處理邏輯
+    return render_template('Amd.html')
+
+@app.route('/path/to/geforce/cards')
+def geforce_cards():
+    # 這裡是處理函數的邏輯
+    return render_template('geforce_cards.html')
+
+@app.route('/path/to/amd/cards')
+def amd_cards():
+    # 這裡是處理函數的邏輯
+    return render_template('amd_cards.html')
+
+@app.route('/intel/graphics/2')
+def intel_2_graphics():
+    # 这里添加处理逻辑
+    return render_template('Intel2.html')
+
+@app.route('/quadro-cards')
+def quadro_cards():
+    # 這裡是處理邏輯
+    return render_template('quadro_cards.html')

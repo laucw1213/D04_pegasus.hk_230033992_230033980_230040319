@@ -23,10 +23,10 @@
                             <button class="dropbtn">中央處理器</button>
                             <div class="dropdown-content">
                                 <li>
-                                    <a href="/cpu/intel">Intel</a>
+                                    <a href="{{ url_for('intel') }}">{{ _('Intel') }}</a>
                                 </li>
                                 <li>
-                                    <a href="/cpu/amd">AMD</a>
+                                    <a href="{{ url_for('Amd') }}">AMD</a>
                                 </li>
                             </div>
                         </div>
@@ -51,45 +51,65 @@
                             </div>
                         </div>
                         <div class="dropdown">
-                            <button class="dropbtn">
-                                顯示卡
-                            </button>
+                            <button class="dropbtn">顯示卡</button>
                             <div class="dropdown-content">
-                                <li><a href="/graphics-cards/geforce">GeForce</a></li>
-                                <li><a href="/graphics-cards/amd">AMD</a></li>
-                                <li><a href="/graphics-cards/intel">Intel</a></li>
-                                <li><a href="/graphics-cards/quadro">Quadro</a></li>
+                                <li>
+                                    <a href="{{ url_for('geforce_cards') }}">GeForce 顯示卡</a>
+                                </li>
+                                <li>
+                                    <a href="{{ url_for('amd_cards') }}">AMD 顯示卡</a>
+                                </li>
+                                <li>
+                                    <a href="{{ url_for('intel_2_graphics') }}">Intel 顯示卡</a>
+                                </li>
+                                <li>
+                                    <a href="{{ url_for('quadro_cards') }}">Quadro 顯示卡</a>
+                                </li>
                             </div>
                         </div>
                         <div class="dropdown">
-                            <button class="dropbtn">
-                                RAM
-                            </button>
+                            <button class="dropbtn">RAM</button>
                             <div class="dropdown-content">
-                                <li><a href="/ram/ddr5">DDR5</a></li>
-                                <li><a href="/ram/ddr4">DDR4</a></li>
-                                <li><a href="/ram/sodimm">SODIMM</a></li>
+                                <li>
+                                    <a href="/ram/ddr5">DDR5</a>
+                                </li>
+                                <li>
+                                    <a href="/ram/ddr4">DDR4</a>
+                                </li>
+                                <li>
+                                    <a href="/ram/sodimm">SODIMM</a>
+                                </li>
                             </div>
                         </div>
                         <div class="dropdown">
-                            <button class="dropbtn">
-                                儲存裝置
-                            </button>
+                            <button class="dropbtn">儲存裝置</button>
                             <div class="dropdown-content">
-                                <li><a href="/storage/ssd">SSD</a></li>
-                                <li><a href="/storage/hdd">HDD</a></li>
+                                <li>
+                                    <a href="/storage/ssd">SSD</a>
+                                </li>
+                                <li>
+                                    <a href="/storage/hdd">HDD</a>
+                                </li>
                             </div>
                         </div>
                         <div class="dropdown">
-                            <button class="dropbtn">
-                                機箱
-                            </button>
+                            <button class="dropbtn">機箱</button>
                             <div class="dropdown-content">
-                                <li><a href="/cases/atx">ATX 機箱</a></li>
-                                <li><a href="/cases/matx">MATX 機箱</a></li>
-                                <li><a href="/cases/eatx">EATX 機箱</a></li>
-                                <li><a href="/cases/itx">ITX 機箱</a></li>
-                                <li><a href="/cases/accessories">機箱配件</a></li>
+                                <li>
+                                    <a href="/cases/atx">ATX 機箱</a>
+                                </li>
+                                <li>
+                                    <a href="/cases/matx">MATX 機箱</a>
+                                </li>
+                                <li>
+                                    <a href="/cases/eatx">EATX 機箱</a>
+                                </li>
+                                <li>
+                                    <a href="/cases/itx">ITX 機箱</a>
+                                </li>
+                                <li>
+                                    <a href="/cases/accessories">機箱配件</a>
+                                </li>
                             </div>
                         </div>
                         <div class="dropdown">
@@ -97,11 +117,21 @@
                                 主機板
                             </button>
                             <div class="dropdown-content">
-                                <li><a href="/motherboards/atx">ATX 主機板</a></li>
-                                <li><a href="/motherboards/matx">MATX 主機板</a></li>
-                                <li><a href="/motherboards/eatx">EATX 主機板</a></li>
-                                <li><a href="/motherboards/itx">ITX 主機板</a></li>
-                                <li><a href="/motherboards/pcie-cards">PCIE 擴展卡</a></li>
+                                <li>
+                                    <a href="/motherboards/atx">ATX 主機板</a>
+                                </li>
+                                <li>
+                                    <a href="/motherboards/matx">MATX 主機板</a>
+                                </li>
+                                <li>
+                                    <a href="/motherboards/eatx">EATX 主機板</a>
+                                </li>
+                                <li>
+                                    <a href="/motherboards/itx">ITX 主機板</a>
+                                </li>
+                                <li>
+                                    <a href="/motherboards/pcie-cards">PCIE 擴展卡</a>
+                                </li>
                             </div>
                         </div>
                         <div class="dropdown">
@@ -109,9 +139,15 @@
                                 顯示卡配件
                             </button>
                             <div class="dropdown-content">
-                                <li><a href="/graphics-card-accessories/brackets">顯示卡支架</a></li>
-                                <li><a href="/graphics-card-accessories/riser-cables">延長線 Riser Cable</a></li>
-                                <li><a href="/graphics-card-accessories/vertical-brackets">顯示卡直立支架</a></li>
+                                <li>
+                                    <a href="/graphics-card-accessories/brackets">顯示卡支架</a>
+                                </li>
+                                <li>
+                                    <a href="/graphics-card-accessories/riser-cables">延長線 Riser Cable</a>
+                                </li>
+                                <li>
+                                    <a href="/graphics-card-accessories/vertical-brackets">顯示卡直立支架</a>
+                                </li>
                             </div>
                         </div>
                         <div class="dropdown">
@@ -119,11 +155,21 @@
                                 電源供應器
                             </button>
                             <div class="dropdown-content">
-                                <li><a href="/power-supplies/600w-or-less">600W 或以下</a></li>
-                                <li><a href="/power-supplies/650w-to-800w">650W-800W</a></li>
-                                <li><a href="/power-supplies/850w-to-1000w">850W-1000W</a></li>
-                                <li><a href="/power-supplies/1050w-to-1200w">1050W-1200W</a></li>
-                                <li><a href="/power-supplies/1250w-or-more">1250W 或以上</a></li>
+                                <li>
+                                    <a href="/power-supplies/600w-or-less">600W 或以下</a>
+                                </li>
+                                <li>
+                                    <a href="/power-supplies/650w-to-800w">650W-800W</a>
+                                </li>
+                                <li>
+                                    <a href="/power-supplies/850w-to-1000w">850W-1000W</a>
+                                </li>
+                                <li>
+                                    <a href="/power-supplies/1050w-to-1200w">1050W-1200W</a>
+                                </li>
+                                <li>
+                                    <a href="/power-supplies/1250w-or-more">1250W 或以上</a>
+                                </li>
                             </div>
                         </div>
                         <div class="dropdown">
@@ -131,8 +177,12 @@
                                 軟件
                             </button>
                             <div class="dropdown-content">
-                                <li><a href="/software/operating-systems">作業系統</a></li>
-                                <li><a href="/software/applications">應用程式</a></li>
+                                <li>
+                                    <a href="/software/operating-systems">作業系統</a>
+                                </li>
+                                <li>
+                                    <a href="/software/applications">應用程式</a>
+                                </li>
                             </div>
                         </div>
                     </ul>
@@ -144,40 +194,46 @@
     </div>
     <div class="col-lg-9">
         <div id="myCarousel" class="carousel slide" data-ride="carousel">
-        <!-- Indicators -->
-        <ol class="carousel-indicators">
-            <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
-            <li data-target="#myCarousel" data-slide-to="1"></li>
-            <li data-target="#myCarousel" data-slide-to="2"></li>
-        </ol>
-        <!-- Wrapper for slides -->
-        <div class="carousel-inner">
-            <div class="item active">
-                <img src="{{ url_for('static', filename='img/1600w.avif') }}" alt="Image 1">
-                <div class="carousel-caption">
+            <!-- Indicators -->
+            <ol class="carousel-indicators">
+                <li data-target="#myCarousel" data-slide-to="0" class="active">
+                </li>
+                <li data-target="#myCarousel" data-slide-to="1">
+                </li>
+                <li data-target="#myCarousel" data-slide-to="2">
+                </li>
+            </ol>
+            <!-- Wrapper for slides -->
+            <div class="carousel-inner">
+                <div class="item active">
+                    <img src="{{ url_for('static', filename='img/1600w.avif') }}"
+                         alt="Image 1">
+                    <div class="carousel-caption">
+                    </div>
+                </div>
+                <div class="item">
+                    <img src="{{ url_for('static', filename='img/1600w (1).avif') }}"
+                         alt="Image 2">
+                    <div class="carousel-caption">
+                    </div>
+                </div>
+                <div class="item">
+                    <img src="{{ url_for('static', filename='img/1600w (2).avif') }}"
+                         alt="Image 3">
+                    <div class="carousel-caption">
+                    </div>
                 </div>
             </div>
-            <div class="item">
-                <img src="{{ url_for('static', filename='img/1600w (1).avif') }}" alt="Image 2">
-                <div class="carousel-caption">
-                </div>
-            </div>
-            <div class="item">
-                <img src="{{ url_for('static', filename='img/1600w (2).avif') }}" alt="Image 3">
-                <div class="carousel-caption">
-                </div>
-            </div>
+            <!-- Left and right controls -->
+            <a class="left carousel-control" href="#myCarousel" data-slide="prev">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="right carousel-control" href="#myCarousel" data-slide="next">
+                <span class="glyphicon glyphicon-chevron-right"></span>
+                <span class="sr-only">Next</span>
+            </a>
         </div>
-        <!-- Left and right controls -->
-        <a class="left carousel-control" href="#myCarousel" data-slide="prev">
-            <span class="glyphicon glyphicon-chevron-left"></span>
-            <span class="sr-only">Previous</span>
-        </a>
-        <a class="right carousel-control" href="#myCarousel" data-slide="next">
-            <span class="glyphicon glyphicon-chevron-right"></span>
-            <span class="sr-only">Next</span>
-        </a>
-    </div>
         <div class="categories-main svelte-1t16q48">
             <div class="categories-list svelte-1t16q48">
                 <table>
@@ -224,7 +280,7 @@
                                     </p>
                                 </a>
                                 <div class="item-main svelte-1t16q48">
-                                    <a href="/categories/CPU/Intel" class="svelte-1t16q48">Intel</a><a href="/categories/CPU/AMD" class="svelte-1t16q48">AMD</a>
+                                    <a href="{{ url_for('intel') }}">{{ _('Intel') }}</a><a href="{{ url_for('Amd') }}">AMD</a>
                                 </div>
                             </div>
                         </td>
@@ -343,12 +399,12 @@
                                         </path>
                                         </g>
                                     </svg>
-                                    <p class="img-title svelte-1t16q48">
+                                    <p >
                                         顯示卡
                                     </p>
                                 </a>
                                 <div class="item-main svelte-1t16q48">
-                                    <a href="/categories/GPU/GeForce" class="svelte-1t16q48">GeForce</a><a href="/categories/GPU/AMD" class="svelte-1t16q48">AMD</a><a href="/categories/GPU/Intel" class="svelte-1t16q48">Intel</a><a href="/categories/GPU/Quadro" class="svelte-1t16q48">Quadro</a>
+                                    <a href="{{ url_for('geforce_cards') }}">GeForce 顯示卡</a><a href="{{ url_for('amd_cards') }}">AMD 顯示卡</a><a href="{{ url_for('intel_2_graphics') }}">Intel 顯示卡</a><a href="{{ url_for('quadro_cards') }}">Quadro 顯示卡</a>
                                 </div>
                             </div>
                         </td>
