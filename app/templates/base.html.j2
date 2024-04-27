@@ -79,13 +79,15 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li>
-                        <form class="navbar-form navbar-left"
+                        <form id="searchForm"
+                              class="navbar-form navbar-left"
                               role="search"
-                              action="https://legendary-robot-wr74x4j4q74xhqgg-5000.app.github.dev/order_form"
+                              action="{{ url_for('order_form') }}"
                               method="get"
                               target="_blank">
                             <div class="form-group">
-                                <input type="text"
+                                <input id="searchInput"
+                                       type="text"
                                        name="query"
                                        class="form-control"
                                        placeholder="搜尋產品..."
@@ -108,41 +110,47 @@
                                         align-items: center">
                                 <div class="hot-title svelte-1k7y91a" data-svelte-h="svelte-ovgdyn">熱門搜尋 :</div>
                                 &nbsp; &nbsp;
-                                <a href="https://legendary-robot-wr74x4j4q74xhqgg-5000.app.github.dev/order_form?query=4060"
+                                <a href="javascript:void(0);"
                                    class="svelte-1k7y91a"
                                    style="margin-right: 10px;
                                           color: black;
                                           text-decoration: none"
+                                   onclick="document.getElementById('searchInput').value = '4060'; document.getElementById('searchForm').submit();"
                                    target="_blank">4060 Ti</a> &vert;&nbsp; &nbsp;
-                                <a href="https://legendary-robot-wr74x4j4q74xhqgg-5000.app.github.dev/order_form?query=i7-14700K"
+                                <a href="javascript:void(0);"
                                    class="svelte-1k7y91a"
                                    style="margin-right: 10px;
                                           color: black;
                                           text-decoration: none"
+                                   onclick="document.getElementById('searchInput').value = 'i7-14700K'; document.getElementById('searchForm').submit();"
                                    target="_blank">i7-14700K</a> &vert;&nbsp; &nbsp;
-                                <a href="https://legendary-robot-wr74x4j4q74xhqgg-5000.app.github.dev/order_form?query=2TB"
+                                <a href="javascript:void(0);"
                                    class="svelte-1k7y91a"
                                    style="margin-right: 10px;
                                           color: black;
                                           text-decoration: none"
+                                   onclick="document.getElementById('searchInput').value = '2TB'; document.getElementById('searchForm').submit();"
                                    target="_blank">2TB</a> &vert;&nbsp; &nbsp;
-                                <a href="https://legendary-robot-wr74x4j4q74xhqgg-5000.app.github.dev/order_form?query=i9-14900KS"
+                                <a href="javascript:void(0);"
                                    class="svelte-1k7y91a"
                                    style="margin-right: 10px;
                                           color: black;
                                           text-decoration: none"
+                                   onclick="document.getElementById('searchInput').value = 'i9-14900KS'; document.getElementById('searchForm').submit();"
                                    target="_blank">i9-14900KS</a> &vert;&nbsp; &nbsp;
-                                <a href="https://legendary-robot-wr74x4j4q74xhqgg-5000.app.github.dev/order_form?query=ASUS"
+                                <a href="javascript:void(0);"
                                    class="svelte-1k7y91a"
                                    style="margin-right: 10px;
                                           color: black;
                                           text-decoration: none"
+                                   onclick="document.getElementById('searchInput').value = 'ASUS'; document.getElementById('searchForm').submit();"
                                    target="_blank">ASUS</a> &vert;&nbsp; &nbsp;
-                                <a href="https://legendary-robot-wr74x4j4q74xhqgg-5000.app.github.dev/order_form?query=MSI"
+                                <a href="javascript:void(0);"
                                    class="svelte-1k7y91a"
                                    style="margin-right: 10px;
                                           color: black;
                                           text-decoration: none"
+                                   onclick="document.getElementById('searchInput').value = 'MSI'; document.getElementById('searchForm').submit();"
                                    target="_blank">MSI</a>
                             </div>
                         </form>
