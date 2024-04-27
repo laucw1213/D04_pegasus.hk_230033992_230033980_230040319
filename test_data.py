@@ -1,5 +1,5 @@
 from app import db, app
-from app.models import User, Post, Category, Product, Order
+from app.models import User, Category, Product, Order
 
 
 app_context = app.app_context()
@@ -13,13 +13,9 @@ u1.set_password("a")
 u2.set_password("b")
 db.session.add(u1)
 db.session.add(u2)
-u1.follow(u2)
-u2.follow(u1)
 
-p1 = Post(body='my first post!', author=u1)
-p2 = Post(body='my first post!', author=u2)
-db.session.add(p1)
-db.session.add(p2)
+
+
 
 # Create some categories
 category1 = Category(name='CPU')

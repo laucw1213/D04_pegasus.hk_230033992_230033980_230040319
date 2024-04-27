@@ -5,9 +5,9 @@ from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from flask_babel import _, get_locale
 from app import app, db
-from app.forms import LoginForm, RegistrationForm, EditProfileForm, PostForm, \
+from app.forms import LoginForm, RegistrationForm, EditProfileForm, \
     ResetPasswordRequestForm, ResetPasswordForm, OrderForm, CheckoutForm
-from app.models import User, Post, Product, Order, Category, Cart, CartItem, OrderItem
+from app.models import User, Product, Order, Category, Cart, CartItem, OrderItem
 from app.email import send_password_reset_email
 
 
@@ -25,49 +25,14 @@ def staticfiles(filename):
 @app.route('/', methods=['GET', 'POST'])
 @app.route('/index', methods=['GET', 'POST'])
 def index():
-    form = PostForm()
-    if form.validate_on_submit():
-        if current_user.is_authenticated:
-            post = Post(body=form.post.data, author=current_user)
-            db.session.add(post)
-            db.session.commit()
-            flash(_('Your post is now live!'))
-            return redirect(url_for('index'))
-    page = request.args.get('page', 1, type=int)
     if current_user.is_authenticated:
-        posts = current_user.followed_posts().paginate(
-            page=page, per_page=app.config["POSTS_PER_PAGE"], error_out=False)
         cart = Cart(user_id=current_user.id)
         db.session.add(cart)
         db.session.commit()
 
         # 將購物車的 ID 保存到 session 中
         session['cart_id'] = cart.id
-    else:
-        posts = Post.query.order_by(Post.timestamp.desc()).paginate(
-            page=page, per_page=app.config["POSTS_PER_PAGE"], error_out=False)
-    next_url = url_for(
-        'index', page=posts.next_num) if posts.next_num else None
-    prev_url = url_for(
-        'index', page=posts.prev_num) if posts.prev_num else None
-    return render_template('index.html.j2', title=_(''), form=form,
-                           posts=posts.items, next_url=next_url,
-                           prev_url=prev_url)
-
-
-@app.route('/explore')
-@login_required
-def explore():
-    page = request.args.get('page', 1, type=int)
-    posts = Post.query.order_by(Post.timestamp.desc()).paginate(
-        page=page, per_page=app.config["POSTS_PER_PAGE"], error_out=False)
-    next_url = url_for(
-        'explore', page=posts.next_num) if posts.next_num else None
-    prev_url = url_for(
-        'explore', page=posts.prev_num) if posts.prev_num else None
-    return render_template('index.html.j2', title=_('Explore'),
-                           posts=posts.items, next_url=next_url,
-                           prev_url=prev_url)
+    return render_template('index.html.j2', title=_(''))
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -81,10 +46,6 @@ def login():
             flash(_('Invalid username or password'))
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
-        next_page = request.args.get('next')
-        if not next_page or url_parse(next_page).netloc != '':
-            next_page = url_for('index')
-        return redirect(next_page)
     return render_template('login.html.j2', title=_('登入'), form=form)
 
 
@@ -145,15 +106,7 @@ def reset_password(token):
 @login_required
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
-    page = request.args.get('page', 1, type=int)
-    posts = user.followed_posts().paginate(
-        page=page, per_page=app.config["POSTS_PER_PAGE"], error_out=False)
-    next_url = url_for(
-        'index', page=posts.next_num) if posts.next_num else None
-    prev_url = url_for(
-        'index', page=posts.prev_num) if posts.prev_num else None
-    return render_template('user.html.j2', user=user, posts=posts.items,
-                           next_url=next_url, prev_url=prev_url)
+    return render_template('user.html.j2', user=user)
 
 
 @app.route('/edit_profile', methods=['GET', 'POST'])
@@ -171,38 +124,6 @@ def edit_profile():
         form.about_me.data = current_user.about_me
     return render_template('edit_profile.html.j2', title=_('Edit Profile'),
                            form=form)
-
-
-@app.route('/follow/<username>')
-@login_required
-def follow(username):
-    user = User.query.filter_by(username=username).first()
-    if user is None:
-        flash(_('User %(username)s not found.', username=username))
-        return redirect(url_for('index'))
-    if user == current_user:
-        flash(_('You cannot follow yourself!'))
-        return redirect(url_for('user', username=username))
-    current_user.follow(user)
-    db.session.commit()
-    flash(_('You are following %(username)s!', username=username))
-    return redirect(url_for('user', username=username))
-
-
-@app.route('/unfollow/<username>')
-@login_required
-def unfollow(username):
-    user = User.query.filter_by(username=username).first()
-    if user is None:
-        flash(_('User %(username)s not found.', username=username))
-        return redirect(url_for('index'))
-    if user == current_user:
-        flash(_('You cannot unfollow yourself!'))
-        return redirect(url_for('user', username=username))
-    current_user.unfollow(user)
-    db.session.commit()
-    flash(_('You are not following %(username)s.', username=username))
-    return redirect(url_for('user', username=username))
 
 @app.route('/order_form', methods=['GET', 'POST'])
 def order_form():
